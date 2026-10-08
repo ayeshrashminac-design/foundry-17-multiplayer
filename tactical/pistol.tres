@@ -1,0 +1,29 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://mvp/weapon_stats.gd" id="1"]
+[resource]
+script = ExtResource("1")
+name = "FN 502 Tactical"
+ammo_type = ".22 LR"
+sound = "pistol"
+automatic = false
+damage = 32
+head_damage = 64
+magazine = 15
+reserve = 75
+interval = 0.19
+reload = 1.55
+switch_delay = 0.22
+camera_recoil = 0.017
+horizontal_recoil = 0.0025
+visual_recoil = 0.035
+standing_spread = 0.009
+moving_spread = 0.022
+airborne_spread = 0.06
+ads_spread_multiplier = 0.13
+ads_position = Vector3(0, -0.052, -0.42)
+ads_fov = 68.0
+ads_speed = 17.0
+hip_position = Vector3(0.1, -0.14, -0.42)
+visual_scene = "res://tactical/pistol.tscn"
+casing_type = 1
+

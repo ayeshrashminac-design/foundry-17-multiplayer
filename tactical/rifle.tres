@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://mvp/weapon_stats.gd" id="1"]
+[resource]
+script = ExtResource("1")
+name = "AK-74M"
+ammo_type = "5.45"
+sound = "rifle"
+automatic = true
+damage = 26
+head_damage = 52
+magazine = 30
+reserve = 150
+interval = 0.095
+reload = 2.15
+switch_delay = 0.32
+camera_recoil = 0.012
+horizontal_recoil = 0.0025
+visual_recoil = 0.025
+standing_spread = 0.014
+moving_spread = 0.022
+airborne_spread = 0.06
+ads_spread_multiplier = 0.13
+ads_position = Vector3(0, -0.065, -0.38)
+ads_fov = 62.0
+ads_speed = 12.0
+hip_position = Vector3(0.13, -0.14, -0.32)
+visual_scene = "res://tactical/rifle.tscn"
+casing_type = 0

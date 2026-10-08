@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://scripts/industrial_surface.gdshader" id="1_7sp5b"]
+
+[resource]
+resource_name = "IndustrialPanel"
+render_priority = 0
+shader = ExtResource("1_7sp5b")
+shader_parameter/base_color = Color(0.6117647, 0.6627451, 0.6862745, 1)
+shader_parameter/metalness = 0.22
+shader_parameter/surface_roughness = 0.58
+shader_parameter/floor_surface = false

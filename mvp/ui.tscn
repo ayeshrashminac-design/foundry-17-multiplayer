@@ -1,0 +1,1711 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://mvp/ui.gd" id="1_hml8x"]
+
+[ext_resource type="Shader" path="res://mvp/lobby_background.gdshader" id="2_bg"]
+
+[sub_resource type="ShaderMaterial" id="LobbyMaterial"]
+
+shader = ExtResource("2_bg")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7e18k"]
+
+content_margin_left = 20.0
+
+content_margin_top = 20.0
+
+content_margin_right = 20.0
+
+content_margin_bottom = 20.0
+
+bg_color = Color(0.035, 0.066, 0.085, 0.97)
+
+border_width_left = 1
+
+border_width_top = 1
+
+border_width_right = 1
+
+border_width_bottom = 1
+
+border_color = Color(0.15, 0.26, 0.28, 1)
+
+corner_radius_top_left = 8
+
+corner_radius_top_right = 8
+
+corner_radius_bottom_left = 8
+
+corner_radius_bottom_right = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_47esx"]
+
+content_margin_left = 20.0
+
+content_margin_top = 20.0
+
+content_margin_right = 20.0
+
+content_margin_bottom = 20.0
+
+bg_color = Color(0.035, 0.066, 0.085, 0.97)
+
+border_width_left = 1
+
+border_width_top = 1
+
+border_width_right = 1
+
+border_width_bottom = 1
+
+border_color = Color(0.15, 0.26, 0.28, 1)
+
+corner_radius_top_left = 8
+
+corner_radius_top_right = 8
+
+corner_radius_bottom_left = 8
+
+corner_radius_bottom_right = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x0obg"]
+
+content_margin_left = 20.0
+
+content_margin_top = 20.0
+
+content_margin_right = 20.0
+
+content_margin_bottom = 20.0
+
+bg_color = Color(0.035, 0.066, 0.085, 0.97)
+
+border_width_left = 1
+
+border_width_top = 1
+
+border_width_right = 1
+
+border_width_bottom = 1
+
+border_color = Color(0.15, 0.26, 0.28, 1)
+
+corner_radius_top_left = 8
+
+corner_radius_top_right = 8
+
+corner_radius_bottom_left = 8
+
+corner_radius_bottom_right = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_krcgv"]
+
+content_margin_left = 20.0
+
+content_margin_top = 20.0
+
+content_margin_right = 20.0
+
+content_margin_bottom = 20.0
+
+bg_color = Color(0.035, 0.066, 0.085, 0.97)
+
+border_width_left = 1
+
+border_width_top = 1
+
+border_width_right = 1
+
+border_width_bottom = 1
+
+border_color = Color(0.15, 0.26, 0.28, 1)
+
+corner_radius_top_left = 8
+
+corner_radius_top_right = 8
+
+corner_radius_bottom_left = 8
+
+corner_radius_bottom_right = 8
+
+[node name="UI" type="CanvasLayer" unique_id=1303895450]
+
+script = ExtResource("1_hml8x")
+
+[node name="Menu" type="Control" parent="." unique_id=489960511]
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="@ColorRect@20" type="ColorRect" parent="Menu" unique_id=1825090847]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(1,1,1,1)
+
+material = SubResource("LobbyMaterial")
+
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Menu" unique_id=87363353]
+
+layout_mode = 0
+
+anchor_left = 0.0
+
+anchor_top = 0.0
+
+anchor_right = 0.0
+
+anchor_bottom = 0.0
+
+offset_left = 48.0
+
+offset_top = 100.0
+
+offset_right = 496.0
+
+offset_bottom = 642.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_7e18k")
+
+[node name="Rows" type="VBoxContainer" parent="Menu/Panel" unique_id=408199017]
+
+layout_mode = 2
+
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Menu/Panel/Rows" unique_id=1479676711]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 38
+
+text = "FOUNDRY 17"
+
+[node name="Subtitle" type="Label" parent="Menu/Panel/Rows" unique_id=1018819048]
+
+layout_mode = 2
+
+text = "TACTICAL MULTIPLAYER  /  BUNKER ARENA"
+
+theme_override_font_sizes/font_size = 12
+
+theme_override_colors/font_color = Color(0.5,0.9,0.82,1)
+
+[node name="PlayerName" type="LineEdit" parent="Menu/Panel/Rows" unique_id=1188812897]
+
+visible = false
+
+layout_mode = 2
+
+text = "Player"
+
+placeholder_text = "Player name"
+
+max_length = 16
+
+[node name="Account" type="Label" parent="Menu/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Offline mode"
+
+autowrap_mode = 3
+
+theme_override_font_sizes/font_size = 14
+
+[node name="LoginGoogle" type="Button" parent="Menu/Panel/Rows"]
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "SIGN IN  /  CREATE ACCOUNT"
+
+[node name="LogoutGoogle" type="Button" parent="Menu/Panel/Rows"]
+
+visible = false
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "SIGN OUT"
+
+[node name="Address" type="LineEdit" parent="Menu/Panel/Rows" unique_id=1111833291]
+
+visible = false
+
+layout_mode = 2
+
+text = "127.0.0.1"
+
+placeholder_text = "Host LAN/public address"
+
+[node name="RoomCode" type="LineEdit" parent="Menu/Panel/Rows"]
+
+visible = false
+
+layout_mode = 2
+
+placeholder_text = "Room code (8 characters)"
+
+max_length = 8
+
+text_transform = 1
+
+[node name="Port" type="SpinBox" parent="Menu/Panel/Rows" unique_id=1737446135]
+
+visible = false
+
+layout_mode = 2
+
+min_value = 1024.0
+
+max_value = 65535.0
+
+value = 7777.0
+
+prefix = "Port "
+
+[node name="Play" type="Button" parent="Menu/Panel/Rows" unique_id=1402596128]
+
+visible = false
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Play"
+
+[node name="Host" type="Button" parent="Menu/Panel/Rows" unique_id=134787927]
+
+visible = false
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "PLAY WITH FRIENDS"
+
+[node name="Friends" type="Button" parent="Menu/Panel/Rows"]
+
+visible = false
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "FRIENDS"
+
+[node name="Invites" type="Button" parent="Menu/Panel/Rows"]
+
+visible = false
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Game Invites (0)"
+
+[node name="Join" type="Button" parent="Menu/Panel/Rows" unique_id=161300057]
+
+visible = false
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Join Game"
+
+[node name="Training" type="Button" parent="Menu/Panel/Rows"]
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "TRAINING   /   SOLO + BOTS"
+
+[node name="Settings" type="Button" parent="Menu/Panel/Rows" unique_id=519398707]
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "SETTINGS"
+
+[node name="Quit" type="Button" parent="Menu/Panel/Rows" unique_id=808016761]
+
+custom_minimum_size = Vector2(0,42)
+
+layout_mode = 2
+
+text = "EXIT GAME"
+
+[node name="Status" type="Label" parent="Menu/Panel/Rows" unique_id=656354233]
+
+custom_minimum_size = Vector2(0,30)
+
+layout_mode = 2
+
+text = "Internet multiplayer uses friends and game invites. Training works offline.\nWeapons: 1–7 · Aim: right mouse · Reload: R"
+
+autowrap_mode = 3
+
+theme_override_font_sizes/font_size = 13
+
+[node name="AuthPanel" type="Control" parent="."]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="AuthPanel"]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.92)
+
+[node name="Panel" type="PanelContainer" parent="AuthPanel"]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -280.0
+
+offset_top = -318.0
+
+offset_right = 280.0
+
+offset_bottom = 318.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_47esx")
+
+[node name="Rows" type="VBoxContainer" parent="AuthPanel/Panel"]
+
+layout_mode = 2
+
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="AuthPanel/Panel/Rows"]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 24
+
+text = "ONLINE ACCOUNT"
+
+[node name="Hint" type="Label" parent="AuthPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Use Google, or sign in with your email and game password."
+
+autowrap_mode = 3
+
+[node name="Google" type="Button" parent="AuthPanel/Panel/Rows"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 42)
+text = "Continue with Google"
+
+[node name="Email" type="LineEdit" parent="AuthPanel/Panel/Rows"]
+
+layout_mode = 2
+
+placeholder_text = "Email address"
+
+[node name="Password" type="LineEdit" parent="AuthPanel/Panel/Rows"]
+
+layout_mode = 2
+
+placeholder_text = "Password (6+ characters)"
+
+secret = true
+
+[node name="SignIn" type="Button" parent="AuthPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 36)
+
+layout_mode = 2
+
+text = "Sign In"
+
+[node name="CreateAccount" type="Button" parent="AuthPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 36)
+
+layout_mode = 2
+
+text = "Create Account"
+
+[node name="VerificationHint" type="Label" parent="AuthPanel/Panel/Rows"]
+
+visible = false
+
+layout_mode = 2
+
+text = "Confirm on your phone, or paste the email link / code below."
+
+autowrap_mode = 3
+
+[node name="Verification" type="LineEdit" parent="AuthPanel/Panel/Rows"]
+
+visible = false
+
+layout_mode = 2
+
+placeholder_text = "Confirmation link or code"
+
+secret = true
+
+[node name="Verify" type="Button" parent="AuthPanel/Panel/Rows"]
+
+visible = false
+
+layout_mode = 2
+
+text = "VERIFY & CONTINUE"
+
+[node name="Resend" type="Button" parent="AuthPanel/Panel/Rows"]
+
+visible = false
+
+layout_mode = 2
+
+text = "Resend confirmation email"
+
+[node name="Feedback" type="Label" parent="AuthPanel/Panel/Rows"]
+
+layout_mode = 2
+
+custom_minimum_size = Vector2(0,42)
+
+theme_override_font_sizes/font_size = 13
+
+theme_override_colors/font_color = Color(0.7,0.94,0.83,1)
+
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="AuthPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Back"
+
+[node name="FriendsPanel" type="Control" parent="."]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="FriendsPanel"]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.94)
+
+[node name="Panel" type="PanelContainer" parent="FriendsPanel"]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -310.0
+
+offset_top = -310.0
+
+offset_right = 310.0
+
+offset_bottom = 310.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_47esx")
+
+[node name="Rows" type="VBoxContainer" parent="FriendsPanel/Panel"]
+
+layout_mode = 2
+
+theme_override_constants/separation = 3
+
+[node name="Title" type="Label" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 25
+
+text = "FRIENDS"
+
+[node name="YourID" type="Label" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "YOUR ID: —"
+
+selectable = true
+
+theme_override_colors/font_color = Color(0.5,0.9,0.82,1)
+
+[node name="CopyID" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Copy my player ID"
+
+[node name="FriendCode" type="LineEdit" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+placeholder_text = "Friend ID  F17-XXXXXXXXXXXX"
+
+max_length = 16
+
+text_transform = 1
+
+[node name="AddFriend" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Send Friend Request"
+
+[node name="RequestsLabel" type="Label" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "FRIEND REQUESTS"
+
+[node name="Requests" type="ItemList" parent="FriendsPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0,65)
+
+layout_mode = 2
+
+[node name="Accept" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Accept Selected Request"
+
+[node name="Reject" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Reject Selected Request"
+
+[node name="FriendsLabel" type="Label" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "MY FRIENDS"
+
+[node name="Friends" type="ItemList" parent="FriendsPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0,75)
+
+layout_mode = 2
+
+[node name="Remove" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Remove Selected Friend"
+
+[node name="Refresh" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Refresh"
+
+[node name="Feedback" type="Label" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+custom_minimum_size = Vector2(0,42)
+
+theme_override_font_sizes/font_size = 13
+
+theme_override_colors/font_color = Color(0.7,0.94,0.83,1)
+
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="FriendsPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Back"
+
+[node name="InvitesPanel" type="Control" parent="."]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="InvitesPanel"]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.94)
+
+[node name="Panel" type="PanelContainer" parent="InvitesPanel"]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -300.0
+
+offset_top = -280.0
+
+offset_right = 300.0
+
+offset_bottom = 280.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_47esx")
+
+[node name="Rows" type="VBoxContainer" parent="InvitesPanel/Panel"]
+
+layout_mode = 2
+
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 25
+
+text = "GAME INVITES"
+
+[node name="Hint" type="Label" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Invites refresh automatically. Select one to join."
+
+[node name="Invites" type="ItemList" parent="InvitesPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 230)
+
+layout_mode = 2
+
+[node name="Join" type="Button" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Join Selected Invite"
+
+[node name="Decline" type="Button" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Decline Selected Invite"
+
+[node name="Refresh" type="Button" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Refresh"
+
+[node name="Feedback" type="Label" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+custom_minimum_size = Vector2(0,42)
+
+theme_override_font_sizes/font_size = 13
+
+theme_override_colors/font_color = Color(0.7,0.94,0.83,1)
+
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="InvitesPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Back"
+
+[node name="RoomPanel" type="Control" parent="."]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="RoomPanel"]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.94)
+
+[node name="Panel" type="PanelContainer" parent="RoomPanel"]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -300.0
+
+offset_top = -285.0
+
+offset_right = 300.0
+
+offset_bottom = 285.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_47esx")
+
+[node name="Rows" type="VBoxContainer" parent="RoomPanel/Panel"]
+
+layout_mode = 2
+
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 25
+
+text = "CREATE INTERNET ROOM"
+
+[node name="ModeLabel" type="Label" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "GAME MODE"
+
+[node name="Mode" type="OptionButton" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+selected = 0
+
+item_count = 2
+
+popup/item_0/text = "Team Arena (Blue vs Red)"
+
+popup/item_0/id = 1
+
+popup/item_1/text = "Free For All"
+
+popup/item_1/id = 0
+
+[node name="MaxPlayers" type="SpinBox" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+min_value = 2.0
+
+max_value = 8.0
+
+value = 8.0
+
+prefix = "Max players  "
+
+[node name="KillLimit" type="SpinBox" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+min_value = 5.0
+
+max_value = 50.0
+
+step = 5.0
+
+value = 20.0
+
+prefix = "Kill limit  "
+
+[node name="Duration" type="OptionButton" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+selected = 1
+
+item_count = 3
+
+popup/item_0/text = "5 minutes"
+
+popup/item_0/id = 300
+
+popup/item_1/text = "10 minutes"
+
+popup/item_1/id = 600
+
+popup/item_2/text = "15 minutes"
+
+popup/item_2/id = 900
+
+[node name="InviteLabel" type="Label" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "SELECT FRIENDS TO INVITE"
+
+[node name="Friends" type="ItemList" parent="RoomPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 160)
+
+layout_mode = 2
+
+select_mode = 1
+
+[node name="Create" type="Button" parent="RoomPanel/Panel/Rows"]
+
+custom_minimum_size = Vector2(0, 38)
+
+layout_mode = 2
+
+text = "Create Room & Send Invites"
+
+[node name="Feedback" type="Label" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+custom_minimum_size = Vector2(0,42)
+
+theme_override_font_sizes/font_size = 13
+
+theme_override_colors/font_color = Color(0.7,0.94,0.83,1)
+
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="RoomPanel/Panel/Rows"]
+
+layout_mode = 2
+
+text = "Back"
+
+[node name="Pause" type="Control" parent="." unique_id=2045432507]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="@ColorRect@23" type="ColorRect" parent="Pause" unique_id=296175453]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.85)
+
+[node name="Panel" type="PanelContainer" parent="Pause" unique_id=778835477]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -180.0
+
+offset_top = -150.0
+
+offset_right = 180.0
+
+offset_bottom = 150.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_47esx")
+
+[node name="Rows" type="VBoxContainer" parent="Pause/Panel" unique_id=225429478]
+
+layout_mode = 2
+
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Pause/Panel/Rows" unique_id=347901897]
+
+layout_mode = 2
+
+text = "PAUSED — MATCH CONTINUES"
+
+[node name="Resume" type="Button" parent="Pause/Panel/Rows" unique_id=1409609094]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Resume"
+
+[node name="Settings" type="Button" parent="Pause/Panel/Rows" unique_id=152694720]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Settings"
+
+[node name="Leave" type="Button" parent="Pause/Panel/Rows" unique_id=162999041]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Leave Match"
+
+[node name="Quit" type="Button" parent="Pause/Panel/Rows" unique_id=817279445]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Quit"
+
+[node name="Scoreboard" type="Control" parent="." unique_id=182784242]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="@ColorRect@24" type="ColorRect" parent="Scoreboard" unique_id=1580539402]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.85)
+
+[node name="Panel" type="PanelContainer" parent="Scoreboard" unique_id=1403321887]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -300.0
+
+offset_top = -230.0
+
+offset_right = 300.0
+
+offset_bottom = 230.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_x0obg")
+
+[node name="Rows" type="VBoxContainer" parent="Scoreboard/Panel" unique_id=4541045]
+
+layout_mode = 2
+
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Scoreboard/Panel/Rows" unique_id=445289071]
+
+layout_mode = 2
+
+text = "SCOREBOARD"
+
+[node name="Grid" type="GridContainer" parent="Scoreboard/Panel/Rows" unique_id=1578113081]
+
+layout_mode = 2
+
+theme_override_constants/h_separation = 25
+
+columns = 4
+
+[node name="Name" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=279776829]
+
+custom_minimum_size = Vector2(100, 0)
+
+layout_mode = 2
+
+text = "Name"
+
+[node name="Kills" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1420629616]
+
+custom_minimum_size = Vector2(100, 0)
+
+layout_mode = 2
+
+text = "Kills"
+
+[node name="Deaths" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1241402902]
+
+custom_minimum_size = Vector2(100, 0)
+
+layout_mode = 2
+
+text = "Deaths"
+
+[node name="Ping" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1147506614]
+
+custom_minimum_size = Vector2(100, 0)
+
+layout_mode = 2
+
+text = "Ping"
+
+[node name="Cell0_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=920846302]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell0_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=600540369]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell0_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1990487660]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell0_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=598200861]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell1_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1086072685]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell1_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=733381445]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell1_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1166181215]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell1_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=101840135]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell2_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1843401861]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell2_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=73263267]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell2_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=590202410]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell2_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1793028042]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell3_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1981635109]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell3_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1977809607]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell3_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1419655578]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell3_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1433504528]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell4_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1132481084]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell4_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=11616039]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell4_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=2106223107]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell4_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1014153513]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell5_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=722271038]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell5_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=2017984499]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell5_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1337716006]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell5_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1960681372]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell6_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1047475742]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell6_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=793148021]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell6_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=124673047]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell6_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1784659908]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell7_0" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=566511047]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell7_1" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1711756139]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell7_2" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1934654207]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Cell7_3" type="Label" parent="Scoreboard/Panel/Rows/Grid" unique_id=1466588786]
+
+layout_mode = 2
+
+text = "—"
+
+[node name="Rematch" type="Button" parent="Scoreboard/Panel/Rows" unique_id=522931175]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Play Again"
+
+[node name="Leave" type="Button" parent="Scoreboard/Panel/Rows" unique_id=622671610]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Leave Match"
+
+[node name="SettingsPanel" type="Control" parent="." unique_id=1356979884]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+[node name="@ColorRect@25" type="ColorRect" parent="SettingsPanel" unique_id=578456104]
+
+layout_mode = 0
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+color = Color(0.025, 0.035, 0.055, 0.85)
+
+[node name="Panel" type="PanelContainer" parent="SettingsPanel" unique_id=1400783892]
+
+layout_mode = 0
+
+anchor_left = 0.5
+
+anchor_top = 0.5
+
+anchor_right = 0.5
+
+anchor_bottom = 0.5
+
+offset_left = -240.0
+
+offset_top = -235.0
+
+offset_right = 240.0
+
+offset_bottom = 235.0
+
+theme_override_styles/panel = SubResource("StyleBoxFlat_krcgv")
+
+[node name="Rows" type="VBoxContainer" parent="SettingsPanel/Panel" unique_id=989307580]
+
+layout_mode = 2
+
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="SettingsPanel/Panel/Rows" unique_id=1480928484]
+
+layout_mode = 2
+
+text = "SETTINGS"
+
+[node name="SensitivityLabel" type="Label" parent="SettingsPanel/Panel/Rows" unique_id=1664985603]
+
+layout_mode = 2
+
+text = "Mouse sensitivity"
+
+[node name="Sensitivity" type="HSlider" parent="SettingsPanel/Panel/Rows" unique_id=1852951056]
+
+layout_mode = 2
+
+min_value = 0.0005
+
+max_value = 0.01
+
+step = 0.0001
+
+value = 0.0005
+
+[node name="MasterLabel" type="Label" parent="SettingsPanel/Panel/Rows" unique_id=650724609]
+
+layout_mode = 2
+
+text = "Master volume"
+
+[node name="Master" type="HSlider" parent="SettingsPanel/Panel/Rows" unique_id=974012172]
+
+layout_mode = 2
+
+max_value = 1.0
+
+step = 0.01
+
+[node name="SFXLabel" type="Label" parent="SettingsPanel/Panel/Rows" unique_id=1263012227]
+
+layout_mode = 2
+
+text = "SFX volume"
+
+[node name="SFX" type="HSlider" parent="SettingsPanel/Panel/Rows" unique_id=801906482]
+
+layout_mode = 2
+
+max_value = 1.0
+
+step = 0.01
+
+[node name="Fullscreen" type="CheckButton" parent="SettingsPanel/Panel/Rows" unique_id=1784371593]
+
+layout_mode = 2
+
+text = "Fullscreen"
+
+[node name="Resolution" type="OptionButton" parent="SettingsPanel/Panel/Rows" unique_id=2096946049]
+
+layout_mode = 2
+
+selected = 0
+
+item_count = 3
+
+popup/item_0/text = "1280 × 720"
+
+popup/item_0/id = 0
+
+popup/item_1/text = "1600 × 900"
+
+popup/item_1/id = 1
+
+popup/item_2/text = "1920 × 1080"
+
+popup/item_2/id = 2
+
+[node name="Back" type="Button" parent="SettingsPanel/Panel/Rows" unique_id=402108742]
+
+custom_minimum_size = Vector2(0, 34)
+
+layout_mode = 2
+
+text = "Save & Back"
+
+[node name="HUD" type="Control" parent="." unique_id=1036096650]
+
+visible = false
+
+layout_mode = 3
+
+anchors_preset = 15
+
+anchor_right = 1.0
+
+anchor_bottom = 1.0
+
+mouse_filter = 2
+
+[node name="Top" type="Label" parent="HUD" unique_id=233177564]
+
+layout_mode = 0
+
+offset_left = 240.0
+
+offset_top = 20.0
+
+offset_right = 1040.0
+
+offset_bottom = 60.0
+
+text = "WAITING FOR PLAYERS"
+
+horizontal_alignment = 1
+
+[node name="Health" type="Label" parent="HUD" unique_id=224541609]
+
+layout_mode = 0
+
+offset_left = 30.0
+
+offset_top = 655.0
+
+offset_right = 250.0
+
+offset_bottom = 695.0
+
+text = "HP 100"
+
+[node name="OnlineRoom" type="Label" parent="HUD"]
+
+layout_mode = 0
+
+offset_left = 30.0
+
+offset_top = 52.0
+
+offset_right = 520.0
+
+offset_bottom = 78.0
+
+text = ""
+
+[node name="Ammo" type="Label" parent="HUD" unique_id=736504172]
+
+layout_mode = 0
+
+offset_left = 870.0
+
+offset_top = 655.0
+
+offset_right = 1250.0
+
+offset_bottom = 695.0
+
+text = "Assault Rifle  30 / 120"
+
+horizontal_alignment = 2
+
+[node name="Score" type="Label" parent="HUD" unique_id=1463592189]
+
+layout_mode = 0
+
+offset_left = 480.0
+
+offset_top = 655.0
+
+offset_right = 800.0
+
+offset_bottom = 695.0
+
+text = "KILLS 0  DEATHS 0"
+
+horizontal_alignment = 1
+
+[node name="KillFeed" type="Label" parent="HUD" unique_id=1799979725]
+
+layout_mode = 0
+
+offset_left = 840.0
+
+offset_top = 85.0
+
+offset_right = 1250.0
+
+offset_bottom = 265.0
+
+horizontal_alignment = 2
+
+[node name="Respawn" type="Label" parent="HUD" unique_id=1137406422]
+
+layout_mode = 0
+
+offset_left = 400.0
+
+offset_top = 400.0
+
+offset_right = 880.0
+
+offset_bottom = 445.0
+
+horizontal_alignment = 1
+
+[node name="Reload" type="Label" parent="HUD" unique_id=35386554]
+
+layout_mode = 0
+
+offset_left = 450.0
+
+offset_top = 580.0
+
+offset_right = 830.0
+
+offset_bottom = 610.0
+
+horizontal_alignment = 1
+
+[node name="Crosshair" type="Label" parent="HUD" unique_id=1726468041]
+
+layout_mode = 0
+
+offset_left = 625.0
+
+offset_top = 345.0
+
+offset_right = 655.0
+
+offset_bottom = 375.0
+
+text = "+"
+
+horizontal_alignment = 1
+
+[node name="Hit" type="Label" parent="HUD" unique_id=46239283]
+
+visible = false
+
+modulate = Color(1, 0.7254902, 0.36078432, 1)
+
+layout_mode = 0
+
+offset_left = 625.0
+
+offset_top = 345.0
+
+offset_right = 655.0
+
+offset_bottom = 375.0
+
+text = "×"
+
+horizontal_alignment = 1
+
+[node name="WeaponCredit" type="Label" parent="Menu/Panel/Rows"]
+
+layout_mode = 2
+
+theme_override_font_sizes/font_size = 12
+
+text = "Assets: M37_R / Cransh / Bzovius / Alstra Infinite"
+
+visible = false
+
+[node name="Notice" type="Label" parent="."]
+
+visible = false
+
+layout_mode = 0
+
+offset_left = 48.0
+
+offset_top = 674.0
+
+offset_right = 1232.0
+
+offset_bottom = 718.0
+
+theme_override_font_sizes/font_size = 14
+
+theme_override_colors/font_color = Color(0.71,0.92,0.86,1)
+
+autowrap_mode = 3
+
+mouse_filter = 2
+
+[node name="Brand" type="Label" parent="Menu"]
+
+offset_left = 48.0
+
+offset_top = 30.0
+
+offset_right = 900.0
+
+offset_bottom = 70.0
+
+text = "F17   /   OPERATIONS HUB"
+
+theme_override_font_sizes/font_size = 18
+
+theme_override_colors/font_color = Color(0.5,0.9,0.82,1)
+
+mouse_filter = 2
+
+[node name="OperatorTitle" type="Label" parent="Menu"]
+
+offset_left = 650.0
+
+offset_top = 584.0
+
+offset_right = 1210.0
+
+offset_bottom = 655.0
+
+text = "READY FOR DEPLOYMENT\nFOUNDRY 17   /   FREE FOR ALL   /   2–8 PLAYERS"
+
+theme_override_font_sizes/font_size = 20
+
+mouse_filter = 2

@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tactical/authored_weapon.gd" id="1_wqevb"]
+[ext_resource type="PackedScene" path="res://assets/additional_weapons/fps_animations_fn_502_tactical.glb" id="2_wcpa3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v2t1l"]
+shading_mode = 0
+albedo_color = Color(1, 0.78, 0.25, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_25kbx"]
+radius = 0.03
+height = 0.06
+radial_segments = 6
+rings = 3
+
+[node name="fn502" type="Node3D" unique_id=271585148]
+script = ExtResource("1_wqevb")
+idle_clip = "Armature|FN_Walk"
+walk_clip = "Armature|FN_Walk"
+run_clip = "Armature|FN_Run"
+equip_clip = ""
+fire_clip = "Armature|FN_Shot"
+reload_clip = "Armature|FN_Reload"
+weapon_bone = "Main_057"
+body_scale = 0.85
+hand_meshes = Array[String](["Object_9"])
+hidden_meshes = Array[String]([])
+spare_magazine = ""
+freeze_idle = true
+
+[node name="ADSPoint" type="Marker3D" parent="." unique_id=672166149]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0.07)
+
+[node name="ShellEjectPoint" type="Marker3D" parent="." unique_id=889592642]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 0.01, 0.015)
+
+[node name="MuzzlePoint" type="Marker3D" parent="." unique_id=969054496]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.066)
+
+[node name="FirePoint" type="Marker3D" parent="MuzzlePoint" unique_id=119828111]
+
+[node name="MuzzleFlash" type="MeshInstance3D" parent="MuzzlePoint" unique_id=581912198]
+visible = false
+material_override = SubResource("StandardMaterial3D_v2t1l")
+mesh = SubResource("SphereMesh_25kbx")
+
+[node name="FlashLight" type="OmniLight3D" parent="MuzzlePoint" unique_id=1366879296]
+light_color = Color(1, 0.75, 0.3, 1)
+light_energy = 0.0
+omni_range = 3.0
+
+[node name="AudioSource" type="AudioStreamPlayer3D" parent="MuzzlePoint" unique_id=2073976812]
+volume_db = -5.0
+unit_size = 5.0
+max_distance = 50.0
+max_polyphony = 3
+
+[node name="GunModel" type="Node3D" parent="." unique_id=1405017323 instance=ExtResource("2_wcpa3")]
+transform = Transform3D(-0.99142665, 0.13066456, -8.742278e-08, 0.13066456, 0.99142665, 4.371138e-08, 9.2384795e-08, 3.191357e-08, -1, -0.07467599, -0.072427794, 0.38699794)
+
+[node name="RightGrip" type="Marker3D" parent="."]
+position = Vector3(0.035, -0.045, 0.065)
+[node name="LeftGrip" type="Marker3D" parent="."]
+position = Vector3(-0.025, -0.055, 0.035)

@@ -1,0 +1,112 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://mvp/app.gd" id="1_jb6ur"]
+[ext_resource type="Script" path="res://mvp/settings.gd" id="2_10imn"]
+[ext_resource type="Script" path="res://mvp/audio.gd" id="3_63wrr"]
+[ext_resource type="Script" path="res://mvp/network.gd" id="4_t5owj"]
+[ext_resource type="Script" path="res://mvp/online_service.gd" id="10_online"]
+[ext_resource type="Script" path="res://mvp/updater.gd" id="11_updater"]
+[ext_resource type="PackedScene" path="res://scenes/arena/foundry_17.tscn" id="5_p84x1"]
+[ext_resource type="Script" path="res://scripts/level_builder.gd" id="6_cldcg"]
+[ext_resource type="PackedScene" path="res://mvp/extensions.tscn" id="7_0p3ot"]
+[ext_resource type="PackedScene" path="res://mvp/ui.tscn" id="8_rdoku"]
+[ext_resource type="Script" path="res://mvp/ui.gd" id="9_pkl7r"]
+
+[ext_resource type="Script" path="res://mvp/shot_effect.gd" id="99_effects"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+sky_top_color = Color(0.04, 0.06, 0.14, 1)
+sky_horizon_color = Color(0.08, 0.12, 0.28, 1)
+sky_curve = 0.1
+ground_bottom_color = Color(0.03, 0.03, 0.06, 1)
+ground_horizon_color = Color(0.06, 0.08, 0.14, 1)
+
+[sub_resource type="Sky" id="Sky_env"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+sky = SubResource("Sky_env")
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.84, 0.92, 1)
+ambient_light_energy = 0.85
+tonemap_mode = 3
+ssao_enabled = true
+ssao_radius = 1.4
+ssao_intensity = 0.65
+glow_enabled = true
+glow_normalized = true
+glow_intensity = 0.25
+glow_bloom = 0.08
+glow_blend_mode = 2
+glow_hdr_threshold = 0.6
+fog_light_color = Color(0.05, 0.08, 0.18, 1)
+fog_light_energy = 0.4
+fog_density = 0.0015
+adjustment_enabled = true
+adjustment_brightness = 1.05
+adjustment_contrast = 1.02
+
+[node name="MVP" type="Node3D" unique_id=1752394206]
+script = ExtResource("1_jb6ur")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=161638606]
+environment = SubResource("Environment_main")
+
+[node name="Settings" type="Node" parent="." unique_id=1990115219]
+script = ExtResource("2_10imn")
+
+[node name="Audio" type="Node" parent="." unique_id=1975706385]
+script = ExtResource("3_63wrr")
+
+[node name="Network" type="Node" parent="." unique_id=1289747864]
+script = ExtResource("4_t5owj")
+
+[node name="Online" type="Node" parent="." unique_id=1289747865]
+script = ExtResource("10_online")
+
+[node name="UpdateGate" type="Node" parent="."]
+script = ExtResource("11_updater")
+
+[node name="Arena" type="Node3D" parent="." unique_id=1561369029 instance=ExtResource("5_p84x1")]
+script = ExtResource("6_cldcg")
+rebake_navigation_on_start = false
+metadata/floor_area_multiplier = 4
+metadata/floor_dimensions_metres = Vector2(96, 96)
+
+[node name="ArenaAdditions" type="Node3D" parent="." unique_id=1606946067 instance=ExtResource("7_0p3ot")]
+
+[node name="Spawns" type="Node3D" parent="." unique_id=2059386115]
+
+[node name="Spawn1" type="Marker3D" parent="Spawns" unique_id=1962297778]
+transform = Transform3D(0.9438584, 0, -0.33035043, 0, 1, 0, 0.33035043, 0, 0.9438584, -14, 1.5, 40)
+
+[node name="Spawn2" type="Marker3D" parent="Spawns" unique_id=346010029]
+transform = Transform3D(-0.9438583, 0, 0.33035046, 0, 1, 0, -0.33035046, 0, -0.9438583, 14, 1.5, -40)
+
+[node name="Spawn3" type="Marker3D" parent="Spawns" unique_id=65119004]
+transform = Transform3D(-0.9438583, 0, -0.33035046, 0, 1, 0, 0.33035046, 0, -0.9438583, -14, 1.5, -40)
+
+[node name="Spawn4" type="Marker3D" parent="Spawns" unique_id=634034755]
+transform = Transform3D(0.9438584, 0, 0.33035043, 0, 1, 0, -0.33035043, 0, 0.9438584, 14, 1.5, 40)
+
+[node name="Spawn5" type="Marker3D" parent="Spawns" unique_id=114541888]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -32, 1.5, 32)
+
+[node name="Spawn6" type="Marker3D" parent="Spawns" unique_id=2002674329]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 32, 1.5, -32)
+
+[node name="Spawn7" type="Marker3D" parent="Spawns" unique_id=416073707]
+transform = Transform3D(-0.28734782, 0, -0.9578263, 0, 1, 0, 0.9578263, 0, -0.28734782, -40, 1.5, -12)
+
+[node name="Spawn8" type="Marker3D" parent="Spawns" unique_id=423522257]
+transform = Transform3D(-0.28734782, 0, 0.9578263, 0, 1, 0, -0.9578263, 0, -0.28734782, 40, 1.5, -12)
+
+[node name="Players" type="Node3D" parent="." unique_id=1477760268]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1303895450 instance=ExtResource("8_rdoku")]
+script = ExtResource("9_pkl7r")
+
+[node name="WeaponEffects" type="Node3D" parent="."]
+script = ExtResource("99_effects")
+
