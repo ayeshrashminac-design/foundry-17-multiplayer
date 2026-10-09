@@ -58,7 +58,7 @@ func _join() -> void:
 	if not visible: return
 	if room.is_empty(): return
 	ui.app.network.require_online_auth = true
-	var address := ui.online.room_connection_address(room)
+	var address: String = ui.online.room_connection_address(room)
 	ui.app.network.join(address,int(room.port),ui.online.display_name,password.text)
 	password.clear()
 	if ui.app.network.connecting:
