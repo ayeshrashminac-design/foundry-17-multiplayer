@@ -9,6 +9,8 @@ var hit_time := 0.0
 var feed: Array[Dictionary] = []
 
 var scoreboard_clock := 0.0
+var performance_clock := 0.0
+var performance_label: Label
 
 var online: Node
 
@@ -31,6 +33,20 @@ func _ready() -> void:
 	preload("res://mvp/lobby_style.gd").apply(self)
 
 	app = get_parent()
+	performance_label = Label.new()
+	performance_label.name = "Performance"
+	performance_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	performance_label.offset_left = -210.0
+	performance_label.offset_top = 18.0
+	performance_label.offset_right = -22.0
+	performance_label.offset_bottom = 48.0
+	performance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	performance_label.add_theme_font_size_override("font_size", 16)
+	performance_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	performance_label.add_theme_constant_override("outline_size", 4)
+	performance_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	performance_label.hide()
+	add_child(performance_label)
 	var damage := ColorRect.new()
 	damage.name = "DamageFeedback"
 	damage.set_script(preload("res://tactical/damage_feedback.gd"))
@@ -662,6 +678,7 @@ func add_kill(text: String) -> void:
 
 func _process(delta: float) -> void:
 
+	performance_label.visible = app.in_match
 	if not app.in_match: return
 
 	var net = app.network
@@ -669,6 +686,10 @@ func _process(delta: float) -> void:
 	var p = net.players.get(multiplayer.get_unique_id())
 
 	if not p: return
+	performance_clock -= delta
+	if performance_clock <= 0.0:
+		performance_clock = 0.25
+		performance_label.text = "FPS %d   •   PING %d ms" % [Engine.get_frames_per_second(), p.ping]
 
 	var seconds := maxi(0, int(ceil(net.remaining)))
 

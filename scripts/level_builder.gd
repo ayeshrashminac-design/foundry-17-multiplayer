@@ -11,11 +11,23 @@ var player_spawn: Vector3:
 		return marker.global_position if marker else global_position
 
 func _ready() -> void:
+	_optimize_runtime_lights()
 	if rebake_navigation_on_start:
 		geometry.bake_finished.connect(_navigation_finished, CONNECT_ONE_SHOT)
 		geometry.bake_navigation_mesh()
 	else:
 		_navigation_finished()
+
+func _optimize_runtime_lights() -> void:
+	# The arena uses many local fixtures. Distance fading keeps nearby lighting
+	# while avoiding full-map light processing on lower-end GPUs.
+	for node in find_children("*", "Light3D", true, false):
+		var light := node as Light3D
+		light.shadow_enabled = false
+		light.distance_fade_enabled = true
+		light.distance_fade_begin = 26.0
+		light.distance_fade_shadow = 20.0
+		light.distance_fade_length = 14.0
 
 func _navigation_finished() -> void:
 	await get_tree().physics_frame
