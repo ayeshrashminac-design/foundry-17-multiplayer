@@ -16,6 +16,8 @@ var peer_id := 1
 var player_name := "Player"
 var character_id := 0
 var team := -1
+var throw_counts: Array = [1,1]
+var throw_left := 0.0
 
 func set_team(value: int) -> void:
 	team = value
@@ -76,9 +78,17 @@ func configure(id: int, nickname: String, net: Node) -> void:
 	
 	$Camera/ViewWeapon.visible = local_player
 	camera.current = local_player
+	if local_player:
+		var throw_view := Node3D.new()
+		throw_view.name = "ThrowView"
+		throw_view.set_script(preload("res://mvp/throw_view.gd"))
+		camera.add_child(throw_view)
 
 func _input(event: InputEvent) -> void:
 	if not local_player or dead or not session.app.input_enabled(): return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_G: session.throwables.request(0)
+		elif event.physical_keycode == KEY_H: session.throwables.request(1)
 	if event is InputEventMouseMotion:
 		var sensitivity: float = session.app.settings.sensitivity * (0.7 if is_aiming else 1.0)
 		yaw -= event.relative.x * sensitivity
@@ -111,7 +121,7 @@ func _physics_process(delta: float) -> void:
 			move_and_slide()
 			jump_pending = false
 			return
-		if session.ended:
+		if session.ended or not session.running:
 			velocity = Vector3.ZERO
 			jump_pending = false
 			return
@@ -164,7 +174,7 @@ func _process(delta: float) -> void:
 
 func snapshot(clock: float) -> Dictionary:
 	return {"id": peer_id, "name": player_name, "character":character_id, "team":team, "pos": position, "vel": velocity, "yaw": yaw, "pitch": pitch,
-		"hp": hp, "dead": dead, "kills": kills, "deaths": deaths, "ping": ping, "slot": weapons.slot,
+		"throw_counts": throw_counts, "throw_left": throw_left, "hp": hp, "dead": dead, "kills": kills, "deaths": deaths, "ping": ping, "slot": weapons.slot,
 		"ammo": weapons.ammo, "reserve": weapons.reserve, "reload": weapons.reload_left,
 		"respawn": maxf(0, respawn_at - clock), "spawn": spawn_serial, "ack": last_shot_id, "ads": is_aiming, "sprint": sprint, "heat": weapons.heat}
 
@@ -189,6 +199,8 @@ func apply_snapshot(state: Dictionary) -> void:
 	target_pitch = state.pitch
 	remote_velocity = state.vel
 	if not local_player: velocity = state.vel
+	throw_counts = state.get("throw_counts",[1,1])
+	throw_left = state.get("throw_left",0.0)
 	hp = state.hp
 	if state.dead and not dead:
 		$Body.fall()
@@ -225,6 +237,8 @@ func reset_at(point: Transform3D) -> void:
 	coyote_time = 0
 	camera.position.y = 1.6
 	camera.rotation.z = 0
+	throw_counts = [1,1]
+	throw_left = 0.0
 	hp = 100
 	hurt_kick = 0
 	dead = false

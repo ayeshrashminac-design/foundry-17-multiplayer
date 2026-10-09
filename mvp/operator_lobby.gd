@@ -43,14 +43,14 @@ func setup(owner_ui: CanvasLayer) -> void:
 	menu_panel.position = Vector2(36,125)
 	menu_panel.size = Vector2(310,535)
 	var rows = ui.get_node("Menu/Panel/Rows")
-	rows.add_theme_constant_override("separation",8)
+	rows.add_theme_constant_override("separation",6)
 	rows.get_node("Title").text = "DEPLOYMENT"
 	rows.get_node("Title").add_theme_font_size_override("font_size",22)
 	rows.get_node("Subtitle").text = "YOUR NEXT MATCH STARTS HERE"
 	rows.get_node("Subtitle").add_theme_font_size_override("font_size",10)
 	for node in rows.get_children():
 		if node is Button:
-			node.custom_minimum_size.y = 42
+			node.custom_minimum_size.y = 36
 			node.add_theme_font_size_override("font_size",14)
 	rows.get_node("Training").text = "TRAINING RANGE"
 	rows.get_node("LoginGoogle").text = "SIGN IN TO PLAY ONLINE"
@@ -60,7 +60,7 @@ func setup(owner_ui: CanvasLayer) -> void:
 	badge = label_at("TRAINING AVAILABLE",Vector2(989,40),12,Color("83dace"))
 	panel_at(Vector2(989,126),Vector2(249,269))
 	label_at("THE MISSION",Vector2(1009,146),12,Color("83dace"))
-	label_at("FREE FOR ALL",Vector2(1009,177),23)
+	label_at("TEAM ARENA",Vector2(1009,177),23)
 	label_at("BUNKER ARENA",Vector2(1009,214),13,Color("97acb8"))
 	label_at("2–8 players\n10-minute rounds\nFirst to 20 kills",Vector2(1009,251),17)
 	label_at("Same weapons. Same rules.",Vector2(1009,356),12,Color("97acb8"))

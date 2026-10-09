@@ -26,6 +26,7 @@ func _ready() -> void:
 	var specs := {"rifle": [0.13, 100, 0.85], "pistol": [0.17, 160, 0.8], "reload": [0.22, 1100, 0.5], "step": [0.08, 70, 0.75], "jump": [0.12, 220, 0.35], "landing": [0.13, 65, 0.7], "hit": [0.08, 900, 0.2], "death": [0.3, 80, 0.5], "click": [0.05, 650, 0.1]}
 	var random := RandomNumberGenerator.new()
 	specs["hurt"] = [0.18, 55, 0.32]
+	specs["explosion"] = [0.8, 45, 0.8]
 	specs["empty"] = [0.06, 450, 0.25]
 	specs["shotgun"] = [0.24, 65, 0.9]
 	specs["smg"] = [0.10, 180, 0.9]

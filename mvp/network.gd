@@ -18,6 +18,9 @@ var snapshot_clock := 0.0
 var ping_clock := 0.0
 var pending: Array[Dictionary] = []
 var nickname := "Player"
+var room_password_key := PackedByteArray()
+var join_password := ""
+var entry_challenges: Dictionary = {}
 var connecting := false
 var connect_timeout := 0.0
 var ping_sent: Dictionary = {}
@@ -31,6 +34,8 @@ var match_seconds := MATCH_SECONDS
 var kill_limit := KILL_LIMIT
 var game_mode := "ffa"
 var team_scores := {0: 0, 1: 0}
+var throwables: Node3D
+var lobby_slots: Array = [0,0,0,0,0,0,0,0]
 
 func start_training(name_text: String) -> void:
 	leave()
@@ -53,19 +58,29 @@ func start_training(name_text: String) -> void:
 
 func _ready() -> void:
 	app = get_parent()
+	throwables = Node3D.new()
+	throwables.name = "Throwables"
+	throwables.set_script(preload("res://mvp/throwables.gd"))
+	add_child(throwables)
 	process_physics_priority = 100
 	multiplayer.peer_disconnected.connect(_disconnected)
 	multiplayer.connected_to_server.connect(_connected)
-	multiplayer.connection_failed.connect(func(): leave("Could not connect to host."))
-	multiplayer.server_disconnected.connect(func(): leave("Host left the match."))
+	multiplayer.connection_failed.connect(func():
+		if connecting: leave("Could not connect to host.")
+	)
+	multiplayer.server_disconnected.connect(func():
+		if active or connecting: leave("Host left the match.")
+	)
 
-func host(port: int, name_text: String, rules: Dictionary = {}) -> bool:
+func host(port: int, name_text: String, rules: Dictionary = {}, password: String = "") -> bool:
 	leave()
+	room_password_key = password.sha256_buffer() if not password.is_empty() else PackedByteArray()
 	max_players = clampi(int(rules.get("max_players", MAX_PLAYERS)), 2, MAX_PLAYERS)
 	match_seconds = clampf(float(rules.get("match_seconds", MATCH_SECONDS)), 300.0, 1800.0)
 	kill_limit = clampi(int(rules.get("kill_limit", KILL_LIMIT)), 5, 50)
 	game_mode = str(rules.get("mode", "tdm"))
 	if game_mode not in ["ffa", "tdm"]: game_mode = "tdm"
+	if game_mode == "tdm": max_players = 8
 	var peer := ENetMultiplayerPeer.new()
 	var error := peer.create_server(port, max_players - 1)
 	if error != OK:
@@ -79,8 +94,9 @@ func host(port: int, name_text: String, rules: Dictionary = {}) -> bool:
 	app.ui.status("Hosting on UDP %d. Waiting for another player." % port)
 	return true
 
-func join(address: String, port: int, name_text: String) -> void:
+func join(address: String, port: int, name_text: String, password: String = "") -> void:
 	leave()
+	join_password = password
 	var peer := ENetMultiplayerPeer.new()
 	var error := peer.create_client(address, port)
 	if error != OK:
@@ -93,14 +109,19 @@ func join(address: String, port: int, name_text: String) -> void:
 	app.ui.status("Connecting…")
 
 func _connected() -> void:
-	register.rpc_id(1, nickname, app.online.access_token, app.online.player_code, app.settings.character_id)
+	request_entry.rpc_id(1)
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func register(name_text: String, token: String = "", claimed_code: String = "", character: int = 0) -> void:
+func register(name_text: String, token: String = "", claimed_code: String = "", character: int = 0, proof: PackedByteArray = PackedByteArray()) -> void:
 	if not multiplayer.is_server(): return
 	var id := multiplayer.get_remote_sender_id()
 	if players.has(id): return
-	if players.size() >= max_players:
+	if not _valid_entry(id,proof):
+		entry_rejected.rpc_id(id,"Incorrect room password. Please try again.")
+		await get_tree().create_timer(0.2).timeout
+		if multiplayer.is_server() and active and id in multiplayer.get_peers(): multiplayer.multiplayer_peer.disconnect_peer(id)
+		return
+	if players.size() >= max_players or running or ended:
 		multiplayer.multiplayer_peer.disconnect_peer(id)
 		return
 	if require_online_auth:
@@ -115,6 +136,9 @@ func register(name_text: String, token: String = "", claimed_code: String = "", 
 		authenticated_tokens[id] = auth_id
 		var metadata: Dictionary = identity.get("user_metadata", {})
 		name_text = str(metadata.get("full_name", metadata.get("name", metadata.get("display_name", str(identity.get("email", "Player")).get_slice("@", 0)))))
+	# Re-check after token verification yields: another player may have joined or started.
+	if not active or players.has(id) or players.size() >= max_players or running or ended: return
+	if id not in multiplayer.get_peers(): return
 	var joined = _add_player(id, _unique_name(name_text))
 	joined.set_character(character)
 	state_sequence += 1
@@ -143,6 +167,11 @@ func _add_player(id: int, name_text: String) -> Node:
 	elif id < 0: player.set_character(absi(id)%3)
 	players[id] = player
 	player.set_team(_balanced_team() if game_mode == "tdm" else -1)
+	if multiplayer.is_server() and game_mode == "tdm":
+		for index in range(player.team * 4, player.team * 4 + 4):
+			if lobby_slots[index] == 0:
+				lobby_slots[index] = id
+				break
 	if multiplayer.is_server(): player.reset_at(_spawn_transform(id))
 	return player
 
@@ -171,7 +200,9 @@ func _spawn_transform(id: int) -> Transform3D:
 	return best
 
 func _start_round() -> void:
+	throwables.clear()
 	running = true
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	ended = false
 	winner = ""
 	remaining = match_seconds
@@ -182,13 +213,13 @@ func _start_round() -> void:
 		p.reset_at(_spawn_transform(p.peer_id))
 
 func rematch() -> void:
-	if active and multiplayer.is_server() and players.size() >= 2:
+	if active and multiplayer.is_server() and can_start():
 		_start_round()
 		state_sequence += 1
 		_broadcast_world()
 
 func start_match() -> void:
-	if not active or not multiplayer.is_server() or running or players.size() < 2: return
+	if not multiplayer.is_server() or not can_start() or app.ui._room_busy: return
 	_start_round()
 	state_sequence += 1
 	_broadcast_world()
@@ -196,7 +227,12 @@ func start_match() -> void:
 func leave(message: String = "") -> void:
 	if is_instance_valid(app) and app.audio: app.audio.stop_all()
 	if app and app.online and not training and not app.online.room_code.is_empty(): app.online.clear_room()
+	if is_instance_valid(throwables): throwables.clear()
 	authenticated_tokens.clear()
+	entry_challenges.clear()
+	room_password_key = PackedByteArray()
+	join_password = ""
+	lobby_slots = [0,0,0,0,0,0,0,0]
 	if is_instance_valid(app) and app.has_node("WeaponEffects"): app.get_node("WeaponEffects").clear()
 	training = false
 	if is_instance_valid(app) and app.has_node("TrainingMap"):
@@ -233,12 +269,15 @@ func _disconnected(id: int) -> void:
 		players[id].queue_free()
 		players.erase(id)
 	ping_sent.erase(id)
+	entry_challenges.erase(id)
+	for index in 8:
+		if lobby_slots[index] == id: lobby_slots[index] = 0
 	state_sequence += 1
 	_broadcast_world()
 
 @rpc("any_peer", "call_remote", "unreliable_ordered", 1)
 func request_input(seq: int, movement: Vector2, look_yaw: float, look_pitch: float, sprinting: bool, jumping: bool, aiming: bool = false) -> void:
-	if not multiplayer.is_server(): return
+	if not multiplayer.is_server() or not running or ended: return
 	var id := multiplayer.get_remote_sender_id()
 	if not players.has(id) or not movement.is_finite() or not is_finite(look_yaw) or not is_finite(look_pitch): return
 	var p = players[id]
@@ -287,7 +326,7 @@ func _physics_process(delta: float) -> void:
 			if command.shot <= p.last_shot_id: continue
 			p.last_shot_id = command.shot
 			if p.local_player: p.get_node("WeaponController").reconcile(command.shot)
-		if p.dead: continue
+		if p.dead or p.throw_left > 0: continue
 		if command.kind == 2:
 			p.weapons.switch_to(command.slot)
 		elif command.kind == 1:
@@ -313,7 +352,7 @@ func _physics_process(delta: float) -> void:
 	ping_clock -= delta
 	if ping_clock <= 0:
 		ping_clock = 1.0
-		for id in players:
+		for id in _connected_peers():
 			if id == 1: continue
 			var stamp := Time.get_ticks_msec()
 			ping_sent[id] = stamp
@@ -412,6 +451,8 @@ func state(seq: int, packet: PackedByteArray, time_left: float, started: bool, f
 func _sync(roster: Array, time_left: float, started: bool, finished: bool, result: String, rules: Dictionary = {}) -> void:
 	if ended and not finished and app.in_match and not app.paused and not app.ui.settings_open:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if started and not running and not app.paused and not app.ui.settings_open:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	remaining = time_left
 	running = started
 	ended = finished
@@ -422,6 +463,8 @@ func _sync(roster: Array, time_left: float, started: bool, finished: bool, resul
 		kill_limit = int(rules.get("kill_limit", kill_limit))
 		game_mode = str(rules.get("mode", game_mode))
 		team_scores = rules.get("team_scores",team_scores)
+		lobby_slots = rules.get("lobby_slots",lobby_slots)
+		throwables.sync(rules.get("throwables",[]))
 	var present := []
 	for entry in roster:
 		present.append(entry.id)
@@ -471,10 +514,67 @@ func _broadcast_world() -> void:
 	for id in _connected_peers(): world.rpc_id(id, state_sequence, _states(), remaining, running, ended, winner, _rules())
 
 func _rules() -> Dictionary:
-	return {"mode": game_mode, "max_players": max_players, "match_seconds": match_seconds, "kill_limit": kill_limit, "team_scores": team_scores}
+	return {"mode": game_mode, "max_players": max_players, "match_seconds": match_seconds, "kill_limit": kill_limit, "team_scores": team_scores, "lobby_slots": lobby_slots, "throwables": throwables.snapshot()}
 
 func emit_event(kind: String, id: int, value: int, message: String) -> void:
 	if training: event(kind, id, value, message)
 	else: event.rpc(kind, id, value, message)
 
 
+
+func can_start() -> bool:
+	if not active or training or running or players.size() < 2: return false
+	if game_mode != "tdm": return true
+	var counts := [0,0]
+	for player in players.values():
+		if player.team in [0,1]: counts[player.team] += 1
+	return counts[0] > 0 and counts[1] > 0 and counts[0] <= 4 and counts[1] <= 4
+
+func choose_slot(index: int) -> void:
+	if multiplayer.is_server(): _claim_slot(1,index)
+	else: request_slot.rpc_id(1,index)
+
+@rpc("any_peer", "call_remote", "reliable", 0)
+func request_slot(index: int) -> void:
+	if multiplayer.is_server(): _claim_slot(multiplayer.get_remote_sender_id(),index)
+
+func _claim_slot(id: int, index: int) -> bool:
+	if not active or training or running or ended or game_mode != "tdm": return false
+	if not players.has(id) or index < 0 or index >= 8: return false
+	if lobby_slots[index] != 0 and lobby_slots[index] != id: return false
+	for old in 8:
+		if lobby_slots[old] == id: lobby_slots[old] = 0
+	lobby_slots[index] = id
+	players[id].set_team(index / 4)
+	state_sequence += 1
+	_broadcast_world()
+	return true
+
+@rpc("any_peer", "call_remote", "reliable", 0)
+func request_entry() -> void:
+	if not multiplayer.is_server() or not active: return
+	var id := multiplayer.get_remote_sender_id()
+	if players.has(id) or entry_challenges.has(id): return
+	var nonce := Crypto.new().generate_random_bytes(32)
+	entry_challenges[id] = {"nonce":nonce,"expires":Time.get_ticks_msec()+10000}
+	entry_challenge.rpc_id(id,nonce,not room_password_key.is_empty())
+
+@rpc("authority", "call_remote", "reliable", 0)
+func entry_challenge(nonce: PackedByteArray, protected_room: bool) -> void:
+	if not connecting or nonce.size() != 32: return
+	var proof := PackedByteArray()
+	if protected_room: proof = Crypto.new().hmac_digest(HashingContext.HASH_SHA256,join_password.sha256_buffer(),nonce)
+	join_password = ""
+	register.rpc_id(1,nickname,app.online.access_token,app.online.player_code,app.settings.character_id,proof)
+
+func _valid_entry(id: int, proof: PackedByteArray) -> bool:
+	if room_password_key.is_empty(): return true
+	var challenge: Dictionary = entry_challenges.get(id,{})
+	entry_challenges.erase(id)
+	if challenge.is_empty() or int(challenge.expires) < Time.get_ticks_msec(): return false
+	var expected := Crypto.new().hmac_digest(HashingContext.HASH_SHA256,room_password_key,challenge.nonce)
+	return Crypto.new().constant_time_compare(expected,proof)
+
+@rpc("authority", "call_remote", "reliable", 0)
+func entry_rejected(message: String) -> void:
+	leave(message)

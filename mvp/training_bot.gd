@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 	var origin := actor.global_position + Vector3(0, 1.6, 0)
 	var query := PhysicsRayQueryParameters3D.create(origin, target.global_position + Vector3(0, 1.3, 0), 3, [actor.get_rid()])
 	var hit := actor.get_world_3d().direct_space_state.intersect_ray(query)
-	var visible: bool = not hit.is_empty() and hit.collider == target
+	var visible: bool = not hit.is_empty() and hit.collider == target and not net.throwables.obscures(origin,target.global_position+Vector3.UP)
 	var distance := offset.length()
 	if weapon_think <= 0.0:
 		weapon_think = 0.45
