@@ -550,7 +550,7 @@ func resolve_room(code: String) -> Dictionary:
 
 		return {}
 
-	var path := "/rest/v1/game_rooms?select=code,host_address,port,host_name,mode,max_players,kill_limit,match_seconds&code=eq." + code.uri_encode() + "&limit=1"
+	var path := "/rest/v1/game_rooms?select=code,host_id,host_address,port,host_name,mode,max_players,kill_limit,match_seconds&code=eq." + code.uri_encode() + "&limit=1"
 
 	var result := await _request_json(path, HTTPClient.METHOD_GET, {}, true)
 
@@ -569,6 +569,13 @@ func resolve_room(code: String) -> Dictionary:
 		return {}
 
 	return rows[0]
+
+func room_connection_address(room: Dictionary) -> String:
+	# Public addresses often cannot loop back through the same router. When a
+	# second game instance on the host PC joins its own room, use loopback.
+	if not user_id.is_empty() and str(room.get("host_id", "")) == user_id:
+		return "127.0.0.1"
+	return str(room.get("host_address", "")).strip_edges()
 
 func clear_room() -> void:
 
@@ -981,4 +988,3 @@ func verify_confirmation(address: String, value: String) -> bool:
 	_start_social_updates()
 
 	return true
-

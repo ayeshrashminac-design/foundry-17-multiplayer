@@ -290,7 +290,7 @@ func _join() -> void:
 
 		app.network.require_online_auth = true
 
-		app.network.join(str(room.get("host_address", "")), int(room.get("port", 7777)), online.display_name)
+		app.network.join(online.room_connection_address(room), int(room.get("port", 7777)), online.display_name)
 		if app.network.connecting:
 			online.room_code = code
 			online.room_changed.emit(code)
