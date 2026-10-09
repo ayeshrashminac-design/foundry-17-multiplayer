@@ -908,13 +908,25 @@ popup/item_2/text = "15 minutes"
 
 popup/item_2/id = 900
 
+[node name="PasswordLabel" type="Label" parent="RoomPanel/Panel/Rows"]
+layout_mode = 2
+text = "ROOM PASSWORD (4–64 CHARACTERS)"
+
+[node name="Password" type="LineEdit" parent="RoomPanel/Panel/Rows"]
+layout_mode = 2
+secret = true
+max_length = 64
+placeholder_text = "Choose a password to share with friends"
+
 [node name="InviteLabel" type="Label" parent="RoomPanel/Panel/Rows"]
+visible = false
 
 layout_mode = 2
 
 text = "SELECT FRIENDS TO INVITE"
 
 [node name="Friends" type="ItemList" parent="RoomPanel/Panel/Rows"]
+visible = false
 
 custom_minimum_size = Vector2(0, 160)
 
@@ -928,7 +940,7 @@ custom_minimum_size = Vector2(0, 38)
 
 layout_mode = 2
 
-text = "Create Room & Send Invites"
+text = "CREATE ROOM"
 
 [node name="Feedback" type="Label" parent="RoomPanel/Panel/Rows"]
 

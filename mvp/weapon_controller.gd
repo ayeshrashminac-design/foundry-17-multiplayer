@@ -42,6 +42,7 @@ func model(first_person: bool, slot: int = -1) -> Node3D:
 	return extra_models[key]
 
 func update_models() -> void:
+	view.visible = actor.local_player and not actor.dead and actor.throw_left <= 0
 	for first in [true,false]:
 		for index in actor.weapons.DATA.size():
 			var weapon = model(first,index)
@@ -105,7 +106,7 @@ func _physics_process(delta: float) -> void:
 	if not actor.local_player: return
 	if not Input.is_action_pressed("shoot"): require_release = false
 	var enabled: bool = actor.session.app.input_enabled() and not actor.dead and not actor.session.ended
-	if not enabled:
+	if not enabled or actor.throw_left > 0:
 		click_pending = false
 		require_release = true
 		return
@@ -144,6 +145,7 @@ func feedback(point: Vector3, normal: Vector3, slot: int, play_feedback: bool) -
 
 func _process(delta: float) -> void:
 	if not actor.session: return
+	view.visible = actor.local_player and not actor.dead and actor.throw_left <= 0
 	flash = maxf(0, flash - delta)
 	recoil = lerpf(recoil, 0.0, 1.0-exp(-14.0*delta))
 	var spec = actor.weapons.DATA[actor.weapons.slot]
@@ -187,6 +189,7 @@ func _process(delta: float) -> void:
 	if switch_slot >= 0 or equip_time > 0: target.y -= 0.22 * (1.0 if switch_slot >= 0 else equip_time/maxf(spec.switch_delay,0.01))
 	var reload_blend: float = sin(clampf(1.0-actor.reload_timer/spec.reload,0,1)*PI) if actor.is_reloading else 0.0
 	target += Vector3(-0.025,-0.065,0.04)*reload_blend
+	if actor.throw_left > 0: target += Vector3(0,-0.45,0.15) * sin((1-actor.throw_left/0.9)*PI)
 	view.position = view.position.lerp(target+bob+Vector3(0,0,recoil),damping)
 	var rotation_target := Vector3(recoil*0.8+sway.x-0.26*wall_blend,sway.y+0.12*wall_blend,-0.08*reload_blend+sin(actor.phase)*motion_blend*0.012+0.10*wall_blend)
 	if actor.is_aiming: rotation_target *= 0.12

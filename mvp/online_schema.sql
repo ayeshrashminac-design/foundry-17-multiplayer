@@ -45,7 +45,7 @@ revoke all on table public.profiles from anon;
 revoke all on table public.game_rooms from anon;
 
 alter table public.game_rooms
-  add column if not exists mode text not null default 'ffa' check (mode in ('ffa')),
+  add column if not exists mode text not null default 'ffa' check (mode in ('ffa','tdm')),
   add column if not exists max_players integer not null default 8 check (max_players between 2 and 8),
   add column if not exists kill_limit integer not null default 20 check (kill_limit between 5 and 50),
   add column if not exists match_seconds integer not null default 600 check (match_seconds between 300 and 1800);
@@ -107,3 +107,7 @@ revoke update on public.friendships, public.game_invites from authenticated;
 grant update (status, updated_at) on public.friendships to authenticated;
 grant update (status) on public.game_invites to authenticated;
 create index if not exists game_invites_room_code_idx on public.game_invites(room_code);
+
+-- Upgrade existing installations as well as new ones.
+alter table public.game_rooms drop constraint if exists game_rooms_mode_check;
+alter table public.game_rooms add constraint game_rooms_mode_check check (mode in ('ffa','tdm'));

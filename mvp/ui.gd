@@ -14,7 +14,11 @@ var online: Node
 
 var _last_social := ""
 
+var room_access: ConfirmationDialog
 var _room_busy := false
+var room_error := ""
+var room_notice := ""
+var room_attempt := 0
 
 var _resend_at := 0
 
@@ -40,7 +44,7 @@ func _ready() -> void:
 
 	menu.get_node("Host").pressed.connect(_open_room_panel)
 
-	menu.get_node("Join").pressed.connect(_join)
+	menu.get_node("Join").pressed.connect(func(): room_access.open())
 
 	menu.get_node("Friends").pressed.connect(_open_friends)
 
@@ -122,7 +126,11 @@ func _ready() -> void:
 
 	online.confirmation_pending.connect(_show_verification)
 
-	online.operation_failed.connect(status)
+	online.operation_failed.connect(func(message):
+		room_error = message
+		room_notice = message
+		status(message)
+	)
 
 	online.room_changed.connect(func(_code): _refresh_account())
 
@@ -130,6 +138,10 @@ func _ready() -> void:
 
 	online.invites_changed.connect(_render_social)
 
+	room_access = ConfirmationDialog.new()
+	room_access.set_script(preload("res://mvp/room_access.gd"))
+	add_child(room_access)
+	room_access.setup(self)
 	_refresh_account()
 
 func _host_direct() -> void:
@@ -192,8 +204,16 @@ func _open_room_panel() -> void:
 func _create_internet_room() -> void:
 
 	if _room_busy: return
+	var room_password: String = $RoomPanel/Panel/Rows/Password.text
+	if room_password.length() < 4 or room_password.length() > 64:
+		status("Choose a room password with 4–64 characters.")
+		return
 
 	_room_busy = true
+	room_error = ""
+	room_notice = "Preparing internet room…"
+	room_attempt += 1
+	var attempt := room_attempt
 
 	$RoomPanel/Panel/Rows/Create.disabled = true
 
@@ -203,16 +223,7 @@ func _create_internet_room() -> void:
 
 	var rules := {"mode": "tdm" if rows.get_node("Mode").get_item_id(rows.get_node("Mode").selected) == 1 else "ffa", "max_players": int(rows.get_node("MaxPlayers").value), "kill_limit": int(rows.get_node("KillLimit").value), "match_seconds": int(rows.get_node("Duration").get_item_id(rows.get_node("Duration").selected))}
 
-	var invite_ids: Array[String] = []
-
-	var friend_list: ItemList = rows.get_node("Friends")
-
-	for index in friend_list.get_selected_items():
-
-		var data: Dictionary = friend_list.get_item_metadata(index)
-
-		invite_ids.append(str(data.get("id", "")))
-
+	if rules.mode == "tdm": rules.max_players = 8
 	status("Preparing the internet room…")
 
 	var address: String = await online.prepare_internet_host(7777)
@@ -229,7 +240,7 @@ func _create_internet_room() -> void:
 
 	app.network.require_online_auth = true
 
-	if not app.network.host(7777, online.display_name, rules):
+	if not app.network.host(7777, online.display_name, rules, room_password):
 
 		_room_busy = false
 
@@ -238,6 +249,11 @@ func _create_internet_room() -> void:
 		return
 
 	var room: Dictionary = await online.create_room(address, 7777, rules)
+	if attempt != room_attempt or not app.network.active:
+		_room_busy = false
+		$RoomPanel/Panel/Rows/Create.disabled = false
+		if not room.is_empty(): online.clear_room()
+		return
 
 	_room_busy = false
 
@@ -245,15 +261,14 @@ func _create_internet_room() -> void:
 
 	if room.is_empty():
 
-		app.network.leave()
-
+		var error := room_error if not room_error.is_empty() else "Room creation failed. Please retry."
+		app.network.leave(error)
+		$RoomPanel.show()
 		return
 
-	for friend_id in invite_ids:
-
-		if not friend_id.is_empty(): await online.send_game_invite(friend_id)
-
-	status("Internet room %s created. %d invite(s) sent." % [online.room_code, invite_ids.size()])
+	room_notice = room_error
+	$RoomPanel/Panel/Rows/Password.clear()
+	status("Room %s created. Share the Room ID and password with your friends." % online.room_code)
 
 func _join() -> void:
 
@@ -273,13 +288,12 @@ func _join() -> void:
 
 		if room.is_empty(): return
 
-		online.room_code = code
-
-		online.room_changed.emit(code)
-
 		app.network.require_online_auth = true
 
 		app.network.join(str(room.get("host_address", "")), int(room.get("port", 7777)), online.display_name)
+		if app.network.connecting:
+			online.room_code = code
+			online.room_changed.emit(code)
 
 		return
 
@@ -485,13 +499,7 @@ func _join_invite() -> void:
 
 	$InvitesPanel.hide()
 
-	app.network.require_online_auth = true
-
-	app.network.join(str(room.host_address), int(room.port), online.display_name)
-
-	online.room_code = str(room.code)
-
-	online.room_changed.emit(online.room_code)
+	room_access.open(str(room.code))
 
 func _decline_invite() -> void:
 
@@ -572,6 +580,9 @@ func _refresh_account() -> void:
 	menu.get_node("LogoutGoogle").visible = online.signed_in
 
 	menu.get_node("Host").visible = online.signed_in
+	menu.get_node("Host").text = "CREATE ARENA ROOM"
+	menu.get_node("Join").visible = online.signed_in
+	menu.get_node("Join").text = "JOIN ROOM"
 
 	menu.get_node("Friends").visible = online.signed_in
 
@@ -672,7 +683,7 @@ func _process(delta: float) -> void:
 
 	$HUD/Ammo.text = "%s   %d / %d" % [p.weapons.DATA[p.weapons.slot].name, p.get_node("WeaponController").available_ammo(), p.weapons.reserve[p.weapons.slot]]
 
-	$HUD/Score.text = "KILLS %d   DEATHS %d" % [p.kills, p.deaths]
+	$HUD/Score.text = "KILLS %d   DEATHS %d   |   G: FRAG %d   H: SMOKE %d" % [p.kills, p.deaths, p.throw_counts[0], p.throw_counts[1]]
 
 	var countdown: float = maxf(0, p.respawn_at - net.clock) if multiplayer.is_server() else p.respawn_at
 
@@ -702,11 +713,11 @@ func _process(delta: float) -> void:
 
 	$HUD/KillFeed.text = "\n".join(lines)
 
-	$Scoreboard.visible = (net.active and not net.running and not net.training) or net.ended or (Input.is_physical_key_pressed(KEY_TAB) and not settings_open and not app.paused)
+	$Scoreboard.visible = (net.game_mode != "tdm" and net.active and not net.running and not net.training) or net.ended or (net.running and Input.is_physical_key_pressed(KEY_TAB) and not settings_open and not app.paused)
 	var action: Button = $Scoreboard/Panel/Rows/Rematch
 	action.visible = multiplayer.is_server()
 	action.text = "START MATCH" if not net.running and not net.ended else "PLAY AGAIN"
-	action.disabled = net.players.size() < 2
+	action.disabled = not net.can_start()
 	if net.active and not net.running and not net.training: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	if net.ended and not settings_open: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

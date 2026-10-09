@@ -101,6 +101,12 @@ func _process(delta: float) -> void:
 			if knee>=0: skeleton.set_bone_pose_rotation(knee,skeleton.get_bone_pose_rotation(knee)*Quaternion(Vector3.RIGHT,0.45))
 	var reload_amount: float = sin((1.0-actor.reload_timer/actor.get_reload_duration())*PI) if actor.is_reloading else 0.0
 	pose_weapon(actor.camera.rotation.x,speed,actor.phase,reload_amount)
+	if actor.throw_left > 0:
+		var t: float = 1.0-actor.throw_left/0.9
+		var reach: float = sin(t*PI)
+		var wrist := skeleton.find_bone("Wrist.R")
+		var target := skeleton.to_local(actor.to_global(Vector3(0.35,1.65+reach*0.3,0.15 if t < 0.39 else -0.65*reach)))
+		IK.solve(skeleton,skeleton.find_bone("UpperArm.R"),skeleton.find_bone("LowerArm.R"),wrist,target,skeleton.to_local(actor.to_global(Vector3(0.75,1.45,0.2))),aim_shoulder("R"),skeleton.get_bone_global_pose(wrist).basis,true)
 
 func pose_weapon(pitch: float, speed: float, phase: float, reload_amount: float) -> void:
 	var mount: Node3D = $WeaponMount

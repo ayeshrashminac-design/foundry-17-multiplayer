@@ -6,13 +6,13 @@ Foundry 17 is an editable Godot 4.7.1 multiplayer FPS project. It includes an in
 
 1. Install Godot 4.7.1.
 2. Import `project.godot`.
-3. Open `scenes/main.tscn` and press **F6**, or press **F5** to run the configured main scene.
+3. Press **F5** to run `mvp/main.tscn`.
 
 ## Play
 
 - **Training** starts the local bot arena.
-- **Host Game** creates an internet room and displays its room ID.
-- Friends sign in, join or accept an invite, then the room host starts the match.
+- **Create Arena Room** creates a password-protected room and displays its room ID.
+- Friends sign in and use **Join Room** with the room ID and password. Choose a free Blue/Red slot; the host starts when both teams have players.
 
 ## Controls
 
@@ -23,6 +23,7 @@ Foundry 17 is an editable Godot 4.7.1 multiplayer FPS project. It includes an in
 - **Space**: jump
 - **Shift**: sprint
 - **R**: reload
+- **G / H**: frag grenade / smoke
 - **1 / 2**: switch weapon
 - **Tab**: scoreboard
 - **Esc**: pause

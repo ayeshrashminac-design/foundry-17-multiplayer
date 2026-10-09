@@ -9,6 +9,10 @@ var in_match := false
 var paused := false
 
 func _ready() -> void:
+	var lobby := Control.new()
+	lobby.name = "ArenaLobby"
+	lobby.set_script(preload("res://mvp/arena_lobby.gd"))
+	$UI.add_child(lobby)
 	$Arena/ArenaNavigation.enabled = false
 	$Arena/Pickups.hide()
 	$Arena/Pickups.process_mode = Node.PROCESS_MODE_DISABLED
@@ -16,7 +20,7 @@ func _ready() -> void:
 	$UpdateGate.begin()
 	var allowed: bool = await $UpdateGate.finished
 	if not allowed: return
-	show_menu()
+	if not network.active: show_menu()
 	# Optional direct launch is useful for local multi-process testing.
 	var args := OS.get_cmdline_user_args()
 	if "--host" in args:
@@ -27,7 +31,7 @@ func _ready() -> void:
 		network.start_training("Player")
 
 func input_enabled() -> bool:
-	return in_match and not paused and not network.ended and not ui.settings_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
+	return in_match and network.running and not paused and not network.ended and not ui.settings_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 
 func enter_match() -> void:
 	if not in_match:
@@ -56,7 +60,7 @@ func show_menu(message: String = "") -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func toggle_pause() -> void:
-	if not in_match: return
+	if not in_match or not network.running: return
 	paused = not paused
 	ui.get_node("Pause").visible = paused
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if paused else Input.MOUSE_MODE_CAPTURED
