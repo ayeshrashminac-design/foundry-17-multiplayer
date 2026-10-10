@@ -12,10 +12,11 @@ var was_open := false
 func _ready() -> void:
 	app = get_parent().get_parent()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var background := ColorRect.new()
-	background.color = Color("101824")
+	var background := Control.new()
+	background.set_script(preload("res://mvp/tactical_grid.gd"))
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
+	theme = app.ui.get_node("Menu").theme
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,32)
@@ -45,6 +46,13 @@ func _ready() -> void:
 			var index := team*4+cell
 			var button := Button.new()
 			button.custom_minimum_size.y = 65
+			var accent := Color("59cfff") if team == 0 else Color("ff656b")
+			var card := preload("res://mvp/lobby_style.gd").reference_frame()
+			if team == 1: card.texture = preload("res://mvp/ui_frame_red.svg")
+			button.add_theme_stylebox_override("normal", card)
+			button.add_theme_stylebox_override("disabled", card)
+			button.add_theme_color_override("font_color", accent.lightened(0.5))
+			button.add_theme_color_override("font_disabled_color", Color("d2e3ee"))
 			button.pressed.connect(func(): app.network.choose_slot(index))
 			list.add_child(button)
 			slots.append(button)

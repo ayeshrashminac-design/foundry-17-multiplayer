@@ -9,6 +9,11 @@ var in_match := false
 var paused := false
 
 func _ready() -> void:
+	var tactical_hud := Control.new()
+	tactical_hud.name = "TacticalHUD"
+	tactical_hud.set_script(preload("res://mvp/tactical_hud.gd"))
+	$UI.add_child(tactical_hud)
+	$UI.move_child(tactical_hud, $UI.get_node("HUD").get_index() + 1)
 	var lobby := Control.new()
 	lobby.name = "ArenaLobby"
 	lobby.set_script(preload("res://mvp/arena_lobby.gd"))
