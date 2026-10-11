@@ -77,6 +77,7 @@ func _build_ui() -> void:
 	exit_button.hide()
 	rows.add_child(exit_button)
 	request = HTTPRequest.new()
+	request.use_threads = true
 	request.timeout = 30.0
 	request.request_completed.connect(_request_completed)
 	add_child(request)
@@ -87,6 +88,7 @@ func _check() -> void:
 	if not manifest_url.begins_with("https://"):
 		_fail("Update service is not configured. This build cannot start safely.")
 		return
+	request.timeout = 30.0
 	request.download_file = ""
 	var error := request.request(manifest_url,["Cache-Control: no-cache"])
 	if error != OK: _fail("Could not contact the update service.")
@@ -118,11 +120,17 @@ func _download() -> void:
 		_fail("This release manifest is incomplete or unsafe.")
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://updates"))
+	var download_path := ProjectSettings.globalize_path(DOWNLOAD)
+	if FileAccess.file_exists(DOWNLOAD):
+		DirAccess.remove_absolute(download_path)
 	downloading = true
 	progress.value = 0
 	progress.show()
 	_set_buttons(false,false,true)
 	message.text = "Downloading update inside the game…"
+	# Release archives are large and can take several minutes on slower links.
+	# A request-wide timeout would abort a healthy download before it finishes.
+	request.timeout = 0.0
 	request.download_file = DOWNLOAD
 	var error := request.request(url)
 	if error != OK:
@@ -137,7 +145,7 @@ func _process(_delta: float) -> void:
 func _download_completed(result: int, code: int) -> void:
 	downloading = false
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
-		_fail("Update download failed. Check the connection and retry.")
+		_fail("Update download failed (network result %d, HTTP %d). Check the connection and retry." % [result,code])
 		return
 	var expected_size := int(manifest.get("size",0))
 	var downloaded := FileAccess.open(DOWNLOAD,FileAccess.READ)
