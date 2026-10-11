@@ -96,3 +96,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		if ui.settings_open: ui.close_settings()
 		elif in_match and not network.ended: toggle_pause()
 
+
+func prepare_bot_navigation() -> void:
+	if network.map_id == "backrooms":
+		$BackroomsArena.prepare_navigation()
+		return
+	var region: NavigationRegion3D = $Arena/ArenaNavigation
+	if region.has_meta("includes_cover"): return
+	$Arena.add_to_group("foundry_bot_geometry")
+	$ArenaAdditions.add_to_group("foundry_bot_geometry")
+	var mesh := NavigationMesh.new()
+	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
+	mesh.geometry_collision_mask = 1
+	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
+	mesh.geometry_source_group_name = "foundry_bot_geometry"
+	mesh.agent_height = 2.0
+	mesh.agent_radius = 0.5
+	mesh.filter_walkable_low_height_spans = true
+	mesh.filter_ledge_spans = true
+	region.navigation_mesh = mesh
+	region.bake_navigation_mesh(false)
+	region.set_meta("includes_cover", true)

@@ -542,7 +542,7 @@ func can_start() -> bool:
 
 func fill_empty_slots_with_bots() -> void:
 	if not multiplayer.is_server() or not active or training or running or ended or game_mode != "tdm": return
-	if map_id == "backrooms": app.get_node("BackroomsArena").prepare_navigation()
+	app.prepare_bot_navigation()
 	for index in 8:
 		if players.size() >= MAX_PLAYERS or lobby_slots[index] != 0: continue
 		var bot_id := -100 - index

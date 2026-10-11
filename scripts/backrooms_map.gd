@@ -35,7 +35,9 @@ func prepare_navigation() -> void:
 	var nav := NavigationMesh.new()
 	nav.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	nav.agent_height = 2.0
-	nav.agent_radius = 0.5
+	nav.agent_radius = 0.25
+	nav.filter_walkable_low_height_spans = true
+	nav.filter_ledge_spans = true
 	region.navigation_mesh = nav
 	var geometry := get_children()
 	add_child(region)
