@@ -33,15 +33,18 @@ var max_players := MAX_PLAYERS
 var match_seconds := MATCH_SECONDS
 var kill_limit := KILL_LIMIT
 var game_mode := "ffa"
+var map_id := "backrooms"
 var team_scores := {0: 0, 1: 0}
 var throwables: Node3D
 var lobby_slots: Array = [0,0,0,0,0,0,0,0]
 
-func start_training(name_text: String) -> void:
+func start_training(name_text: String, selected_map: String = "backrooms") -> void:
 	leave()
+	map_id = selected_map if selected_map in ["foundry", "backrooms"] else "backrooms"
 	training = true
 	active = true
 	var arena = load("res://mvp/training_map.tscn").instantiate()
+	arena.map_id = map_id
 	app.add_child(arena)
 	app.enter_match()
 	arena.get_node("Navigation").bake_navigation_mesh(false)
@@ -79,6 +82,8 @@ func host(port: int, name_text: String, rules: Dictionary = {}, password: String
 	match_seconds = clampf(float(rules.get("match_seconds", MATCH_SECONDS)), 300.0, 1800.0)
 	kill_limit = clampi(int(rules.get("kill_limit", KILL_LIMIT)), 5, 50)
 	game_mode = str(rules.get("mode", "tdm"))
+	map_id = str(rules.get("map_id", "backrooms"))
+	if map_id not in ["foundry", "backrooms"]: map_id = "backrooms"
 	if game_mode not in ["ffa", "tdm"]: game_mode = "tdm"
 	if game_mode == "tdm": max_players = 8
 	var peer := ENetMultiplayerPeer.new()
@@ -184,7 +189,8 @@ func _balanced_team() -> int:
 	return 0 if blue <= red else 1
 
 func _spawn_transform(id: int) -> Transform3D:
-	var spawn_root = app.get_node("TrainingMap/Spawns") if training else app.get_node("Spawns")
+	var spawn_name := "FoundrySpawns" if map_id == "foundry" else "BackroomsSpawns"
+	var spawn_root = app.get_node("TrainingMap/" + spawn_name) if training else app.get_node(spawn_name)
 	var best: Transform3D = spawn_root.get_child(0).global_transform
 	var best_distance := -1.0
 	for marker in spawn_root.get_children():
@@ -254,6 +260,7 @@ func leave(message: String = "") -> void:
 	match_seconds = MATCH_SECONDS
 	kill_limit = KILL_LIMIT
 	game_mode = "ffa"
+	map_id = "backrooms"
 	team_scores = {0: 0, 1: 0}
 	if multiplayer.multiplayer_peer: multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
@@ -462,7 +469,10 @@ func _sync(roster: Array, time_left: float, started: bool, finished: bool, resul
 		match_seconds = float(rules.get("match_seconds", match_seconds))
 		kill_limit = int(rules.get("kill_limit", kill_limit))
 		game_mode = str(rules.get("mode", game_mode))
+		map_id = str(rules.get("map_id", map_id))
+		if map_id not in ["foundry", "backrooms"]: map_id = "backrooms"
 		team_scores = rules.get("team_scores",team_scores)
+		app.update_map_visibility()
 		lobby_slots = rules.get("lobby_slots",lobby_slots)
 		throwables.sync(rules.get("throwables",[]))
 	var present := []
@@ -514,7 +524,7 @@ func _broadcast_world() -> void:
 	for id in _connected_peers(): world.rpc_id(id, state_sequence, _states(), remaining, running, ended, winner, _rules())
 
 func _rules() -> Dictionary:
-	return {"mode": game_mode, "max_players": max_players, "match_seconds": match_seconds, "kill_limit": kill_limit, "team_scores": team_scores, "lobby_slots": lobby_slots, "throwables": throwables.snapshot()}
+	return {"mode": game_mode, "map_id": map_id, "max_players": max_players, "match_seconds": match_seconds, "kill_limit": kill_limit, "team_scores": team_scores, "lobby_slots": lobby_slots, "throwables": throwables.snapshot()}
 
 func emit_event(kind: String, id: int, value: int, message: String) -> void:
 	if training: event(kind, id, value, message)
@@ -529,6 +539,23 @@ func can_start() -> bool:
 	for player in players.values():
 		if player.team in [0,1]: counts[player.team] += 1
 	return counts[0] > 0 and counts[1] > 0 and counts[0] <= 4 and counts[1] <= 4
+
+func fill_empty_slots_with_bots() -> void:
+	if not multiplayer.is_server() or not active or training or running or ended or game_mode != "tdm": return
+	for index in 8:
+		if players.size() >= MAX_PLAYERS or lobby_slots[index] != 0: continue
+		var bot_id := -100 - index
+		while players.has(bot_id): bot_id -= 100
+		var bot = _add_player(bot_id, "BOT %02d" % (index + 1))
+		for old in 8:
+			if lobby_slots[old] == bot_id: lobby_slots[old] = 0
+		lobby_slots[index] = bot_id
+		bot.set_team(index / 4)
+		var brain := Node.new()
+		brain.set_script(preload("res://mvp/training_bot.gd"))
+		bot.add_child(brain)
+	state_sequence += 1
+	_broadcast_world()
 
 func choose_slot(index: int) -> void:
 	if multiplayer.is_server(): _claim_slot(1,index)

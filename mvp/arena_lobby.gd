@@ -5,6 +5,7 @@ var slots: Array[Button] = []
 var title: Label
 var hint: Label
 var start: Button
+var add_bots: Button
 var friends: VBoxContainer
 var social_signature := ""
 var was_open := false
@@ -76,6 +77,11 @@ func _ready() -> void:
 	start.custom_minimum_size = Vector2(230,48)
 	start.pressed.connect(func(): app.network.start_match())
 	buttons.add_child(start)
+	add_bots = Button.new()
+	add_bots.text = "FILL EMPTY SLOTS WITH BOTS"
+	add_bots.custom_minimum_size = Vector2(250,48)
+	add_bots.pressed.connect(func(): app.network.fill_empty_slots_with_bots())
+	buttons.add_child(add_bots)
 	var leave := Button.new()
 	leave.text = "LEAVE ROOM"
 	leave.pressed.connect(func():
@@ -101,7 +107,8 @@ func _process(_delta: float) -> void:
 		app.ui.get_node("Pause").hide()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	app.ui.get_node("Scoreboard").hide()
-	title.text = "ARENA  /  ROOM %s  /  %d OF 8" % [app.online.room_code if not app.online.room_code.is_empty() else "LOCAL",net.players.size()]
+	var map_name := "FOUNDRY 17" if net.map_id == "foundry" else "BACKROOMS"
+	title.text = "ARENA  /  %s  /  ROOM %s  /  %d OF 8" % [map_name, app.online.room_code if not app.online.room_code.is_empty() else "LOCAL",net.players.size()]
 	hint.text = "Select an empty slot to choose your team. At least one player per team is required."
 	for i in 8:
 		var id: int = net.lobby_slots[i]
@@ -109,6 +116,8 @@ func _process(_delta: float) -> void:
 		slots[i].text = (player.player_name + ("  [HOST]" if id == 1 else "") + ("  [YOU]" if id == multiplayer.get_unique_id() else "")) if player else "EMPTY SLOT %d  /  JOIN" % [i%4+1]
 		slots[i].disabled = id != 0 and id != multiplayer.get_unique_id()
 	start.visible = multiplayer.is_server()
+	add_bots.visible = multiplayer.is_server()
+	add_bots.disabled = net.players.size() >= 8
 	var publishing: bool = app.ui._room_busy
 	start.disabled = publishing or not net.can_start()
 	if publishing:

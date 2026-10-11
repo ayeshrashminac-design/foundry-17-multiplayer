@@ -80,31 +80,57 @@ metadata/floor_dimensions_metres = Vector2(96, 96)
 [node name="BackroomsArena" parent="." instance=ExtResource("100_backrooms")]
 position = Vector3(200, 0, 0)
 
-[node name="Spawns" type="Node3D" parent="." unique_id=2059386115]
+[node name="BackroomsSpawns" type="Node3D" parent="." unique_id=2059386115]
 
-[node name="Spawn1" type="Marker3D" parent="Spawns" unique_id=1962297778]
+[node name="Spawn1" type="Marker3D" parent="BackroomsSpawns" unique_id=1962297778]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 34)
 
-[node name="Spawn2" type="Marker3D" parent="Spawns" unique_id=346010029]
+[node name="Spawn2" type="Marker3D" parent="BackroomsSpawns" unique_id=346010029]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -34)
 
-[node name="Spawn3" type="Marker3D" parent="Spawns" unique_id=65119004]
+[node name="Spawn3" type="Marker3D" parent="BackroomsSpawns" unique_id=65119004]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -31)
 
-[node name="Spawn4" type="Marker3D" parent="Spawns" unique_id=634034755]
+[node name="Spawn4" type="Marker3D" parent="BackroomsSpawns" unique_id=634034755]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 31)
 
-[node name="Spawn5" type="Marker3D" parent="Spawns" unique_id=114541888]
+[node name="Spawn5" type="Marker3D" parent="BackroomsSpawns" unique_id=114541888]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 28)
 
-[node name="Spawn6" type="Marker3D" parent="Spawns" unique_id=2002674329]
+[node name="Spawn6" type="Marker3D" parent="BackroomsSpawns" unique_id=2002674329]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -28)
 
-[node name="Spawn7" type="Marker3D" parent="Spawns" unique_id=416073707]
+[node name="Spawn7" type="Marker3D" parent="BackroomsSpawns" unique_id=416073707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 25)
 
-[node name="Spawn8" type="Marker3D" parent="Spawns" unique_id=423522257]
+[node name="Spawn8" type="Marker3D" parent="BackroomsSpawns" unique_id=423522257]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -25)
+
+[node name="FoundrySpawns" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(-14, 1.5, 40)
+
+[node name="Spawn2" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(14, 1.5, -40)
+
+[node name="Spawn3" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(-14, 1.5, -40)
+
+[node name="Spawn4" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(14, 1.5, 40)
+
+[node name="Spawn5" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(-32, 1.5, 32)
+
+[node name="Spawn6" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(32, 1.5, -32)
+
+[node name="Spawn7" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(-40, 1.5, -12)
+
+[node name="Spawn8" type="Marker3D" parent="FoundrySpawns"]
+position = Vector3(40, 1.5, -12)
 
 [node name="Players" type="Node3D" parent="." unique_id=1477760268]
 

@@ -11,6 +11,10 @@ func _exit_tree() -> void:
 	stop_all()
 
 var sounds: Dictionary = {}
+const RIFLE_SHOT = preload("res://tactical/assets/rifle_shot.wav")
+const PISTOL_SHOT = preload("res://tactical/assets/pistol_shot.wav")
+const RELOAD_SOUND = preload("res://assets/audio/assault_rifle_reload_cc0.wav")
+const EXPLOSION_SOUND = preload("res://assets/audio/grenade_explosion_cc0.wav")
 const STONE_STEPS = [
 	preload("res://assets/fps_asset_kit/Fantozzi-StoneL1.ogg"),
 	preload("res://assets/fps_asset_kit/Fantozzi-StoneL2.ogg"),
@@ -46,6 +50,12 @@ func _ready() -> void:
 		wav.mix_rate = RATE
 		wav.data = bytes
 		sounds[key] = wav
+	sounds["rifle"] = RIFLE_SHOT
+	sounds["smg"] = RIFLE_SHOT
+	sounds["pistol"] = PISTOL_SHOT
+	sounds["shotgun"] = RIFLE_SHOT
+	sounds["reload"] = RELOAD_SOUND
+	sounds["explosion"] = EXPLOSION_SOUND
 
 func play(key: String, location: Vector3 = Vector3.INF) -> void:
 	if not sounds.has(key) or get_child_count() >= 32: return
@@ -62,7 +72,11 @@ func play(key: String, location: Vector3 = Vector3.INF) -> void:
 		sound.stream = STONE_STEPS[step_index % STONE_STEPS.size()]
 		step_index += 1
 	sound.bus = "SFX"
-	sound.volume_db = -10.0 if key == "step" else -5.0
+	if key in ["rifle", "pistol", "smg", "shotgun"]:
+		sound.pitch_scale = randf_range(0.96, 1.035)
+		sound.volume_db = -2.5
+	else:
+		sound.volume_db = -10.0 if key == "step" else -5.0
 	add_child(sound)
 	sound.finished.connect(sound.queue_free)
 	sound.play()

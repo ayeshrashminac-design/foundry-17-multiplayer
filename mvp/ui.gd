@@ -21,6 +21,8 @@ var _room_busy := false
 var room_error := ""
 var room_notice := ""
 var room_attempt := 0
+var training_map_dialog: ConfirmationDialog
+var training_map_choice: OptionButton
 
 var _resend_at := 0
 
@@ -33,6 +35,7 @@ func _ready() -> void:
 	preload("res://mvp/lobby_style.gd").apply(self)
 
 	app = get_parent()
+	_build_map_selectors()
 	performance_label = Label.new()
 	performance_label.name = "Performance"
 	performance_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -108,7 +111,7 @@ func _ready() -> void:
 
 	$RoomPanel/Panel/Rows/Back.pressed.connect(func(): $RoomPanel.hide())
 
-	menu.get_node("Training").pressed.connect(func(): app.audio.play("click"); app.network.start_training(menu.get_node("PlayerName").text))
+	menu.get_node("Training").pressed.connect(_open_training_selector)
 
 	menu.get_node("Settings").pressed.connect(open_settings)
 
@@ -159,6 +162,48 @@ func _ready() -> void:
 	add_child(room_access)
 	room_access.setup(self)
 	_refresh_account()
+
+
+func _build_map_selectors() -> void:
+	var rows := $RoomPanel/Panel/Rows
+	var label := Label.new()
+	label.name = "MapLabel"
+	label.text = "MAP"
+	rows.add_child(label)
+	rows.move_child(label, rows.get_node("ModeLabel").get_index())
+	var choice := OptionButton.new()
+	choice.name = "Map"
+	choice.add_item("Foundry 17")
+	choice.set_item_metadata(0, "foundry")
+	choice.add_item("Backrooms")
+	choice.set_item_metadata(1, "backrooms")
+	choice.select(1)
+	rows.add_child(choice)
+	rows.move_child(choice, label.get_index() + 1)
+	training_map_dialog = ConfirmationDialog.new()
+	training_map_dialog.title = "SELECT TRAINING MAP"
+	training_map_dialog.dialog_text = "Choose the arena for this training session."
+	training_map_dialog.ok_button_text = "START TRAINING"
+	training_map_dialog.min_size = Vector2i(460, 210)
+	add_child(training_map_dialog)
+	training_map_choice = OptionButton.new()
+	training_map_choice.position = Vector2(24, 88)
+	training_map_choice.size = Vector2(412, 42)
+	training_map_choice.add_item("Foundry 17")
+	training_map_choice.set_item_metadata(0, "foundry")
+	training_map_choice.add_item("Backrooms")
+	training_map_choice.set_item_metadata(1, "backrooms")
+	training_map_choice.select(1)
+	training_map_dialog.add_child(training_map_choice)
+	training_map_dialog.confirmed.connect(_start_selected_training)
+
+func _open_training_selector() -> void:
+	app.audio.play("click")
+	training_map_dialog.popup_centered()
+
+func _start_selected_training() -> void:
+	var selected_map := str(training_map_choice.get_item_metadata(training_map_choice.selected))
+	app.network.start_training(menu.get_node("PlayerName").text, selected_map)
 
 func _host_direct() -> void:
 
@@ -237,7 +282,7 @@ func _create_internet_room() -> void:
 
 	var rows = $RoomPanel/Panel/Rows
 
-	var rules := {"mode": "tdm" if rows.get_node("Mode").get_item_id(rows.get_node("Mode").selected) == 1 else "ffa", "max_players": int(rows.get_node("MaxPlayers").value), "kill_limit": int(rows.get_node("KillLimit").value), "match_seconds": int(rows.get_node("Duration").get_item_id(rows.get_node("Duration").selected))}
+	var rules := {"mode": "tdm" if rows.get_node("Mode").get_item_id(rows.get_node("Mode").selected) == 1 else "ffa", "map_id": rows.get_node("Map").get_item_metadata(rows.get_node("Map").selected), "max_players": int(rows.get_node("MaxPlayers").value), "kill_limit": int(rows.get_node("KillLimit").value), "match_seconds": int(rows.get_node("Duration").get_item_id(rows.get_node("Duration").selected))}
 
 	if rules.mode == "tdm": rules.max_players = 8
 	status("Preparing the internet room…")
@@ -630,7 +675,7 @@ func status(message: String) -> void:
 
 	$Notice.text = message
 
-	$Notice.visible = not message.is_empty()
+	$Notice.visible = not message.is_empty() and not app.in_match
 
 func open_settings() -> void:
 

@@ -39,16 +39,23 @@ func _ready() -> void:
 func input_enabled() -> bool:
 	return in_match and network.running and not paused and not network.ended and not ui.settings_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 
+func update_map_visibility() -> void:
+	var foundry_active: bool = in_match and not network.training and network.map_id == "foundry"
+	var backrooms_active: bool = in_match and not network.training and network.map_id == "backrooms"
+	$Arena.visible = foundry_active
+	$ArenaAdditions.visible = foundry_active
+	$Arena/ArenaNavigation.enabled = foundry_active
+	$BackroomsArena.visible = backrooms_active
+
 func enter_match() -> void:
 	if not in_match:
 		in_match = true
 		paused = false
-		$Arena.hide()
-		$ArenaAdditions.hide()
-		$BackroomsArena.visible = not network.training
 		ui.get_node("Menu").hide()
 		ui.get_node("HUD").show()
+		ui.get_node("Notice").hide()
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	update_map_visibility()
 
 func show_menu(message: String = "") -> void:
 	in_match = false
