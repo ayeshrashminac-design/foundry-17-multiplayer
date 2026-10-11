@@ -35,6 +35,7 @@ func _physics_process(delta: float) -> void:
 		var distance := INF
 		for candidate in net.players.values():
 			if candidate == actor or candidate.dead: continue
+			if net.game_mode == "tdm" and candidate.team == actor.team: continue
 			var gap := actor.global_position.distance_squared_to(candidate.global_position)
 			if gap < distance:
 				distance = gap
@@ -64,7 +65,7 @@ func _physics_process(delta: float) -> void:
 		if desired_slot != actor.weapons.slot and not actor.is_reloading:
 			net._queue_action(actor.peer_id, 2, desired_slot, actor.yaw, actor.pitch)
 			trigger = maxf(trigger, 0.3)
-	if not agent.is_navigation_finished() and (not visible or offset.length() > 9):
+	if NavigationServer3D.map_get_iteration_id(agent.get_navigation_map()) > 0 and not agent.is_navigation_finished() and (not visible or offset.length() > 9):
 		var direction := actor.to_local(agent.get_next_path_position())
 		actor.controls = Vector2(direction.x, direction.z).normalized()
 	actor.sprint = actor.controls.length_squared() > 0.1 and distance > 16.0 and not visible

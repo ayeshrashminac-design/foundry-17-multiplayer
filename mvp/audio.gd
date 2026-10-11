@@ -56,6 +56,8 @@ func _ready() -> void:
 	sounds["shotgun"] = RIFLE_SHOT
 	sounds["reload"] = RELOAD_SOUND
 	sounds["explosion"] = EXPLOSION_SOUND
+	sounds["death"] = preload("res://assets/audio/death_cue.wav")
+	sounds["respawn"] = preload("res://assets/audio/respawn_cue.wav")
 
 func play(key: String, location: Vector3 = Vector3.INF) -> void:
 	if not sounds.has(key) or get_child_count() >= 32: return
@@ -75,6 +77,8 @@ func play(key: String, location: Vector3 = Vector3.INF) -> void:
 	if key in ["rifle", "pistol", "smg", "shotgun"]:
 		sound.pitch_scale = randf_range(0.96, 1.035)
 		sound.volume_db = -2.5
+	elif key in ["death", "respawn"]:
+		sound.volume_db = -9.0
 	else:
 		sound.volume_db = -10.0 if key == "step" else -5.0
 	add_child(sound)

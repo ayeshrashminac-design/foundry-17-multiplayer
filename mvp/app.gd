@@ -42,10 +42,23 @@ func input_enabled() -> bool:
 func update_map_visibility() -> void:
 	var foundry_active: bool = in_match and not network.training and network.map_id == "foundry"
 	var backrooms_active: bool = in_match and not network.training and network.map_id == "backrooms"
-	$Arena.visible = foundry_active
-	$ArenaAdditions.visible = foundry_active
+	_set_map_active($Arena, foundry_active)
+	_set_map_active($ArenaAdditions, foundry_active)
 	$Arena/ArenaNavigation.enabled = foundry_active
-	$BackroomsArena.visible = backrooms_active
+	_set_map_active($BackroomsArena, backrooms_active)
+
+func _set_map_active(map_root: Node3D, enabled: bool) -> void:
+	if map_root.has_meta("map_active") and map_root.get_meta("map_active") == enabled: return
+	map_root.set_meta("map_active", enabled)
+	map_root.visible = enabled
+	for body in map_root.find_children("*", "CollisionObject3D", true, false):
+		if not body.has_meta("map_collision_layer"):
+			body.set_meta("map_collision_layer", body.collision_layer)
+			body.set_meta("map_collision_mask", body.collision_mask)
+		body.collision_layer = int(body.get_meta("map_collision_layer")) if enabled else 0
+		body.collision_mask = int(body.get_meta("map_collision_mask")) if enabled else 0
+	for region in map_root.find_children("*", "NavigationRegion3D", true, false):
+		region.enabled = enabled
 
 func enter_match() -> void:
 	if not in_match:
@@ -60,9 +73,7 @@ func enter_match() -> void:
 func show_menu(message: String = "") -> void:
 	in_match = false
 	paused = false
-	$Arena.hide()
-	$ArenaAdditions.hide()
-	$BackroomsArena.hide()
+	update_map_visibility()
 	ui.get_node("Menu").show()
 	ui.get_node("HUD").hide()
 	ui.get_node("Pause").hide()

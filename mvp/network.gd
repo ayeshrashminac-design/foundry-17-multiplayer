@@ -380,7 +380,7 @@ func _fire(p: Node, shot: int) -> void:
 	for victim in hits: damage(p.peer_id,victim,hits[victim])
 	if not hits.is_empty():
 		if p.peer_id == 1: app.ui.hit_marker(head_hit)
-		elif not training: confirmed_hit.rpc_id(p.peer_id,head_hit)
+		elif not training and p.peer_id > 1: confirmed_hit.rpc_id(p.peer_id,head_hit)
 
 @rpc("authority", "call_local", "reliable", 0)
 func shot_result(id: int, shot: int, slot: int, point: Vector3, normal: Vector3) -> void:
@@ -542,6 +542,7 @@ func can_start() -> bool:
 
 func fill_empty_slots_with_bots() -> void:
 	if not multiplayer.is_server() or not active or training or running or ended or game_mode != "tdm": return
+	if map_id == "backrooms": app.get_node("BackroomsArena").prepare_navigation()
 	for index in 8:
 		if players.size() >= MAX_PLAYERS or lobby_slots[index] != 0: continue
 		var bot_id := -100 - index

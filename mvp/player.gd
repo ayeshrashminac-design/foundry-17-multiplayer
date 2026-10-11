@@ -205,6 +205,8 @@ func apply_snapshot(state: Dictionary) -> void:
 	if state.dead and not dead:
 		$Body.fall()
 		$WeaponController.reset_state()
+	if not state.dead and last_spawn >= 0 and last_spawn != state.spawn and local_player:
+		session.app.audio.play("respawn")
 	if not state.dead and dead: _restore_body()
 	dead = state.dead
 	kills = state.kills
@@ -226,6 +228,7 @@ func apply_snapshot(state: Dictionary) -> void:
 	$Name.visible = not local_player and not dead
 
 func reset_at(point: Transform3D) -> void:
+	if dead and local_player: session.app.audio.play("respawn")
 	transform = point
 	yaw = rotation.y
 	pitch = 0
@@ -241,6 +244,9 @@ func reset_at(point: Transform3D) -> void:
 	throw_left = 0.0
 	hp = 100
 	hurt_kick = 0
+	is_aiming = false
+	is_scoped = false
+	step_clock = 0.3
 	dead = false
 	_restore_body()
 	respawn_at = 0
