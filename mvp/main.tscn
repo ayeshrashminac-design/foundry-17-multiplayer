@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://mvp/ui.gd" id="9_pkl7r"]
 
 [ext_resource type="Script" path="res://mvp/shot_effect.gd" id="99_effects"]
+[ext_resource type="PackedScene" path="res://scenes/maps/backrooms_playable.tscn" id="100_backrooms"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.04, 0.06, 0.14, 1)
@@ -76,31 +77,34 @@ metadata/floor_dimensions_metres = Vector2(96, 96)
 
 [node name="ArenaAdditions" type="Node3D" parent="." unique_id=1606946067 instance=ExtResource("7_0p3ot")]
 
+[node name="BackroomsArena" parent="." instance=ExtResource("100_backrooms")]
+position = Vector3(200, 0, 0)
+
 [node name="Spawns" type="Node3D" parent="." unique_id=2059386115]
 
 [node name="Spawn1" type="Marker3D" parent="Spawns" unique_id=1962297778]
-transform = Transform3D(0.9438584, 0, -0.33035043, 0, 1, 0, 0.33035043, 0, 0.9438584, -14, 1.5, 40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 34)
 
 [node name="Spawn2" type="Marker3D" parent="Spawns" unique_id=346010029]
-transform = Transform3D(-0.9438583, 0, 0.33035046, 0, 1, 0, -0.33035046, 0, -0.9438583, 14, 1.5, -40)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -34)
 
 [node name="Spawn3" type="Marker3D" parent="Spawns" unique_id=65119004]
-transform = Transform3D(-0.9438583, 0, -0.33035046, 0, 1, 0, 0.33035046, 0, -0.9438583, -14, 1.5, -40)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -31)
 
 [node name="Spawn4" type="Marker3D" parent="Spawns" unique_id=634034755]
-transform = Transform3D(0.9438584, 0, 0.33035043, 0, 1, 0, -0.33035043, 0, 0.9438584, 14, 1.5, 40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 31)
 
 [node name="Spawn5" type="Marker3D" parent="Spawns" unique_id=114541888]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -32, 1.5, 32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 28)
 
 [node name="Spawn6" type="Marker3D" parent="Spawns" unique_id=2002674329]
-transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 32, 1.5, -32)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -28)
 
 [node name="Spawn7" type="Marker3D" parent="Spawns" unique_id=416073707]
-transform = Transform3D(-0.28734782, 0, -0.9578263, 0, 1, 0, 0.9578263, 0, -0.28734782, -40, 1.5, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 1.25, 25)
 
 [node name="Spawn8" type="Marker3D" parent="Spawns" unique_id=423522257]
-transform = Transform3D(-0.28734782, 0, 0.9578263, 0, 1, 0, -0.9578263, 0, -0.28734782, 40, 1.5, -12)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 200, 1.25, -25)
 
 [node name="Players" type="Node3D" parent="." unique_id=1477760268]
 

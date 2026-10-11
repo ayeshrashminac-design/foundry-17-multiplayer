@@ -19,6 +19,7 @@ func _ready() -> void:
 	lobby.set_script(preload("res://mvp/arena_lobby.gd"))
 	$UI.add_child(lobby)
 	$Arena/ArenaNavigation.enabled = false
+	$BackroomsArena.hide()
 	$Arena/Pickups.hide()
 	$Arena/Pickups.process_mode = Node.PROCESS_MODE_DISABLED
 	$UI.get_node("Menu").hide()
@@ -42,8 +43,9 @@ func enter_match() -> void:
 	if not in_match:
 		in_match = true
 		paused = false
-		$Arena.visible = not network.training
-		$ArenaAdditions.visible = not network.training
+		$Arena.hide()
+		$ArenaAdditions.hide()
+		$BackroomsArena.visible = not network.training
 		ui.get_node("Menu").hide()
 		ui.get_node("HUD").show()
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -53,6 +55,7 @@ func show_menu(message: String = "") -> void:
 	paused = false
 	$Arena.hide()
 	$ArenaAdditions.hide()
+	$BackroomsArena.hide()
 	ui.get_node("Menu").show()
 	ui.get_node("HUD").hide()
 	ui.get_node("Pause").hide()
